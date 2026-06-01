@@ -43,12 +43,18 @@ accents. Tuned for long coding sessions.
 
 ### Font
 
-`JetBrains Mono`, size 11. Install via the JetBrains Toolbox or download from
-<https://www.jetbrains.com/lp/mono/>.
+`D2CodingLigature Nerd Font`, size 11. Same family as the WezTerm config
+recommends. Picked because it includes:
 
-For Nerd Font icons (e.g. Powerlevel10k prompt), swap
-`family = "JetBrains Mono"` to `family = "JetBrainsMono Nerd Font"` after
-installing it from <https://www.nerdfonts.com/font-downloads>.
+- Korean glyphs (Hangul rendering)
+- Nerd Font icon glyphs (file/folder/Git icons used by `nvim-web-devicons`,
+  Powerlevel10k prompt segments, etc.)
+- Programming ligatures (`==>`, `!=`, `=>`, ...)
+
+If you prefer a different Nerd Font (JetBrainsMono Nerd Font, FiraCode Nerd
+Font, ...), download it from <https://www.nerdfonts.com/font-downloads>,
+install it on Windows, and swap the three `family = "..."` lines under
+`[font.normal|bold|italic]`.
 
 ### Key bindings
 

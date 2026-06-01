@@ -27,15 +27,15 @@ multiplier = 3
 size = 11.0
 
 [font.normal]
-family = "JetBrains Mono"
+family = "D2CodingLigature Nerd Font"
 style = "Regular"
 
 [font.bold]
-family = "JetBrains Mono"
+family = "D2CodingLigature Nerd Font"
 style = "Bold"
 
 [font.italic]
-family = "JetBrains Mono"
+family = "D2CodingLigature Nerd Font"
 style = "Italic"
 
 [cursor]
