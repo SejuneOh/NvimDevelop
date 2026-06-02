@@ -24,10 +24,10 @@ return {
     })
 
     -- 키 바인딩
+    -- <leader>bd/bD/bo/bl/br 은 keymaps.lua 에서 등록 (창 레이아웃 보존)
     local keymap = vim.keymap.set
     keymap("n", "<Tab>", "<cmd>BufferLineCycleNext<cr>", { desc = "다음 버퍼" })
     keymap("n", "<S-Tab>", "<cmd>BufferLineCyclePrev<cr>", { desc = "이전 버퍼" })
-    keymap("n", "<leader>bd", "<cmd>bdelete<cr>", { desc = "버퍼 닫기" })
     keymap("n", "<leader>bp", "<cmd>BufferLinePick<cr>", { desc = "버퍼 선택" })
 
     -- 번호로 바로 이동 (\5 ~ \9). 1~4는 harpoon 슬롯이 차지
