@@ -17,5 +17,11 @@ return {
     vim.keymap.set("n", "<A-j>", smart_splits.resize_down)
     vim.keymap.set("n", "<A-k>", smart_splits.resize_up)
     vim.keymap.set("n", "<A-l>", smart_splits.resize_right)
+
+    -- Terminal mode: 터미널/lazygit 등에서도 같은 단축키로 분할 이동
+    vim.keymap.set("t", "<C-h>", [[<C-\><C-n>]] .. ":lua require('smart-splits').move_cursor_left()<CR>")
+    vim.keymap.set("t", "<C-j>", [[<C-\><C-n>]] .. ":lua require('smart-splits').move_cursor_down()<CR>")
+    vim.keymap.set("t", "<C-k>", [[<C-\><C-n>]] .. ":lua require('smart-splits').move_cursor_up()<CR>")
+    vim.keymap.set("t", "<C-l>", [[<C-\><C-n>]] .. ":lua require('smart-splits').move_cursor_right()<CR>")
   end,
 }
