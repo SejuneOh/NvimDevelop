@@ -1,0 +1,59 @@
+# ~/.config/alacritty/alacritty.toml
+# SejuneOh/WezTerm 의 .wezterm.lua 를 macOS + Alacritty 용으로 이식.
+#
+# 주의:
+#  - 탭/분할/워크스페이스는 Alacritty 에 없으므로 zellij 가 담당합니다.
+#  - Alacritty 는 폰트 리거처(합자)를 렌더링하지 않습니다. 단, Nerd Font
+#    글리프(아이콘)는 정상 표시되어 nvim 의 nvim-tree/lualine 아이콘은 잘 나옵니다.
+#  - macOS 복사/붙여넣기는 Cmd+C / Cmd+V 가 기본 동작합니다.
+
+[general]
+live_config_reload = true
+
+[env]
+TERM = "xterm-256color"
+
+[window]
+opacity = 0.92                 # .wezterm.lua: window_background_opacity = 0.92
+padding = { x = 0, y = 0 }     # .wezterm.lua: window_padding 전부 0
+dynamic_padding = false
+decorations = "full"
+option_as_alt = "Both"         # macOS: Option 키를 Alt 로 → nvim <A-hjkl> 매핑 동작
+
+[font]
+# .wezterm.lua 폰트 스택을 이식 (리거처는 표시 안 되지만 폰트 자체는 동일)
+size = 13.0                    # 레포 원본은 10.0 — 맥 레티나 기준 13 으로 상향(취향껏 조절)
+# 터미널에는 'Mono' 변형(고정폭, 단일 셀 너비 아이콘)이 권장됨.
+# 비-Mono 변형은 아이콘이 잘못된 너비로 렌더되거나 폴백되어 깨질 수 있음.
+normal = { family = "D2CodingLigature Nerd Font Mono", style = "Regular" }
+bold   = { family = "D2CodingLigature Nerd Font Mono", style = "Bold" }
+italic = { family = "D2CodingLigature Nerd Font Mono", style = "Regular" }
+
+[scrolling]
+history = 10000
+
+# ── Github Dark (Gogh) ─────────────────────────────────────────
+# .wezterm.lua: color_scheme = "Github Dark (Gogh)"
+[colors.primary]
+background = "#24292e"
+foreground = "#d1d5da"
+
+[colors.normal]
+black   = "#586069"
+red     = "#ea4a5a"
+green   = "#34d058"
+yellow  = "#ffea7f"
+blue    = "#2188ff"
+magenta = "#b392f0"
+cyan    = "#39c5cf"
+white   = "#d1d5da"
+
+[colors.bright]
+black   = "#959da5"
+red     = "#f97583"
+green   = "#85e89d"
+yellow  = "#ffea7f"
+blue    = "#79b8ff"
+magenta = "#b392f0"
+cyan    = "#56d4dd"
+white   = "#fafbfc"

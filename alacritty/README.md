@@ -9,11 +9,46 @@ terminal option.
 alacritty/
   windows/
     alacritty.toml   # Windows host, launches WSL Ubuntu zsh
+  macos/
+    alacritty.toml   # macOS host, native zsh (port of .wezterm.lua)
   README.md
 ```
 
-Linux and macOS configs can be added under `alacritty/linux/` and
-`alacritty/macos/` later.
+A Linux config can be added under `alacritty/linux/` later.
+
+## macOS
+
+### Install location
+
+Copy `macos/alacritty.toml` into:
+
+```
+~/.config/alacritty/alacritty.toml
+```
+
+Create the `~/.config/alacritty` folder first if it does not exist.
+
+### Behavior
+
+- Uses the native login shell (zsh) — no shell override needed on macOS.
+- Ported from the repo's `.wezterm.lua`: opacity `0.92`, zero window padding,
+  `option_as_alt = "Both"` so the Option key acts as Alt for nvim `<A-hjkl>`
+  mappings.
+- `live_config_reload` is enabled under `[general]`, so saving the file applies
+  changes without restarting Alacritty.
+- Tabs/splits/workspaces are not built into Alacritty — pair it with `zellij`
+  (or tmux) for that.
+
+### Theme
+
+Github Dark (Gogh) — matches the `.wezterm.lua` `color_scheme`.
+
+### Font
+
+`D2CodingLigature Nerd Font Mono`, size 13 (Retina-tuned; the repo's WezTerm
+default is 10). The `Mono` variant is used so Nerd Font icon glyphs render at a
+single cell width. Alacritty does not render ligatures, but the font family
+still matches the WezTerm setup and includes Hangul + Nerd Font icon glyphs.
 
 ## Windows
 
