@@ -12,7 +12,8 @@ Installation phases, in recommended order. Mirrors `SETUP.json`.
 - [x] **syntax_and_editing_helpers** — treesitter, indent-blankline, autopairs, Comment, todo-comments, surround, substitute
 - [x] **autocomplete_and_snippets** — nvim-cmp + cmp-{nvim-lsp,buffer,path,luasnip}, LuaSnip, friendly-snippets, lspkind
 - [x] **lsp_setup** — mason, mason-lspconfig, mason-tool-installer, nvim-lspconfig
-      - Installed LSP: lua_ls, ts_ls, pyright, html, cssls, jsonls, omnisharp (C#)
+      - Installed LSP: lua_ls, ts_ls, pyright, html, cssls, jsonls
+      - C#: roslyn.nvim (see "C# LSP (roslyn)" note below) — not omnisharp
 - [x] **formatting** — conform.nvim
       - Formatters per filetype: stylua (lua), prettier (web), black+isort (python), csharpier (c#)
       - Format on save enabled (LSP fallback)
@@ -48,18 +49,42 @@ Installation phases, in recommended order. Mirrors `SETUP.json`.
 
 _(no pending items)_
 
-### Note: C# LSP (omnisharp)
+### Note: C# LSP (roslyn)
 
-`omnisharp` requires the .NET SDK (installed and verified: dotnet 8.0.125).
-On a fresh machine, install the SDK first:
+C# is served by **`roslyn.nvim`** (`seblyng/roslyn.nvim`, spec at
+`nvim/lua/plugins/roslyn.lua`), not omnisharp. The Mason `roslyn` package
+provides `Microsoft.CodeAnalysis.LanguageServer`.
+
+> ⚠️ **Roslyn requires the .NET 10 runtime.** Roslyn LS v5.8+ targets
+> `Microsoft.NETCore.App` 10.0. With only .NET 8 installed, the server crashes on
+> startup (`exit code 150`, *"You must install or update .NET to run this
+> application"*) and C# completion / hover / go-to-definition silently do not
+> work — `nvim-cmp` and the plugin still load, so the breakage is easy to miss.
+
+On a fresh machine, install the .NET 10 runtime (the SDK works too):
 
 ```bash
-# Ubuntu / WSL2
-sudo apt install dotnet-sdk-8.0
+# macOS (arm64) — official runtime pkg lands in /usr/local/share/dotnet,
+# which is where Roslyn's hostfxr looks. An existing .NET 8 SDK can stay.
+#   download dotnet-runtime-<ver>-osx-arm64.pkg from https://dotnet.microsoft.com/download/dotnet/10.0
+#   sudo installer -pkg dotnet-runtime-<ver>-osx-arm64.pkg -target /
 
-# Then re-run Mason install inside Neovim
-:MasonInstall omnisharp csharpier
+# Ubuntu / WSL2
+sudo apt install dotnet-runtime-10.0   # or dotnet-sdk-10.0
+
+# Verify the runtime is visible, then restart Neovim and open a .cs file:
+dotnet --list-runtimes | grep 10.0
+
+# Mason installs the LS automatically; to (re)install manually:
+:MasonInstall roslyn csharpier
 ```
+
+Roslyn attaches best when a `.csproj` / `.sln` is present in the project root.
+
+> ℹ️ `easy-dotnet.nvim` registers an `easy_dotnet` LSP whose `dotnet-easydotnet`
+> companion binary is not installed by default. This logs a harmless
+> `not executable` error in `:LspLog` / `~/.local/state/nvim/lsp.log` and is
+> unrelated to C# completion.
 
 ## Deviations from Reference Tutorial
 
