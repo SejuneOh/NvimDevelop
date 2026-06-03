@@ -169,7 +169,24 @@ All plugin specs live in `nvim/lua/plugins/` — one file per plugin.
 #### LSP
 - `mason.nvim`, `mason-lspconfig`, `mason-tool-installer` — installers
 - `nvim-lspconfig` — LSP client config
-- Servers auto-installed: `lua_ls`, `ts_ls`, `pyright`, `html`, `cssls`, `jsonls`, `omnisharp` (C#)
+- Servers auto-installed: `lua_ls`, `ts_ls`, `pyright`, `html`, `cssls`, `jsonls`
+- C# is handled by **`roslyn.nvim`** (`seblyng/roslyn.nvim`), not omnisharp — see the warning below
+
+> ⚠️ **C# (roslyn) requires the .NET 10 runtime.** The Mason-installed Roslyn
+> language server (`Microsoft.CodeAnalysis.LanguageServer`, v5.8+) targets
+> `Microsoft.NETCore.App` 10.0. If only .NET 8 is present the server crashes on
+> startup (`exit code 150`, `You must install or update .NET to run this
+> application`) and **no C# completion / hover / go-to-definition works** — even
+> though `nvim-cmp` and the plugin itself load fine.
+>
+> Fix: install the .NET 10 runtime (the SDK also works). On macOS the official
+> arm64 `dotnet-runtime-*-osx-arm64.pkg` installs to `/usr/local/share/dotnet`,
+> which is where Roslyn's hostfxr looks; an existing .NET 8 SDK can stay
+> alongside it. Verify with `dotnet --list-runtimes | grep 10.0`.
+>
+> ℹ️ `easy-dotnet.nvim` registers an `easy_dotnet` LSP whose `dotnet-easydotnet`
+> companion binary is not installed by default — this logs a harmless
+> `not executable` error and is unrelated to completion.
 
 #### Diagnostics / Formatting / Linting
 - `trouble.nvim` — unified diagnostic panel

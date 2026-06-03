@@ -155,9 +155,15 @@
         { "id": "nvim-lspconfig", "spec": "nvim/lua/plugins/lspconfig.lua", "role": "LSP client configuration" }
       ],
       "installed_lsp_servers": ["lua_ls", "ts_ls", "pyright", "html", "cssls", "jsonls"],
-      "pending_lsp_servers": [
-        { "id": "omnisharp", "language": "c_sharp", "requires": ".NET SDK (dotnet) — install separately with 'sudo apt install dotnet-sdk-8.0' or from https://dot.net" }
-      ],
+      "csharp_lsp": {
+        "id": "roslyn",
+        "plugin": "seblyng/roslyn.nvim",
+        "spec": "nvim/lua/plugins/roslyn.lua",
+        "note": "C# uses roslyn.nvim (NOT omnisharp). The Mason 'roslyn' package provides Microsoft.CodeAnalysis.LanguageServer.",
+        "runtime_requirement": ".NET 10 runtime. Roslyn LS v5.8+ targets Microsoft.NETCore.App 10.0; with only .NET 8 the server crashes on startup (exit code 150, 'You must install or update .NET to run this application') and C# completion/hover/definition do not work even though nvim-cmp loads.",
+        "fix": "Install the .NET 10 runtime (SDK also fine). macOS arm64: official dotnet-runtime-*-osx-arm64.pkg installs to /usr/local/share/dotnet where Roslyn's hostfxr resolves runtimes; .NET 8 SDK can remain alongside. Verify: 'dotnet --list-runtimes | grep 10.0'.",
+        "known_noise": "easy-dotnet.nvim (nvim/lua/plugins/easy-dotnet.lua) registers an 'easy_dotnet' LSP whose 'dotnet-easydotnet' binary is not installed by default — harmless 'not executable' log error, unrelated to completion."
+      },
       "keymaps": {
         "gd": "go to definition (Telescope)",
         "gD": "go to declaration",
