@@ -85,19 +85,27 @@ installer/
 
 ## Releasing
 
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
+Releases are automated with **[release-please](https://github.com/googleapis/release-please)**
+— you never tag by hand:
 
-The workflow then, on `windows-latest` and `macos-latest`:
+1. Land `feat:` / `fix:` commits on `main` (via the normal `dev → main` flow).
+2. `release.yml` keeps a **Release PR** (`chore(release): X.Y.Z`) open, with the
+   next version + `CHANGELOG.md` computed from the
+   [Conventional Commit](https://www.conventionalcommits.org/) messages.
+3. **Merge the Release PR** → release-please creates the `vX.Y.Z` tag and the
+   GitHub Release, then calls the build workflow to attach
+   `WezTerm-DevEnv-Setup.exe` and `WezTerm-DevEnv-<ver>.dmg`.
 
-1. Lints (shellcheck, PSScriptAnalyzer, JSON validation).
-2. Builds `WezTerm-DevEnv-Setup.exe` (Inno Setup) and `WezTerm-DevEnv-<ver>.dmg`.
-3. Creates a GitHub Release for the tag and attaches both files.
+Version bumps follow the commit types: `fix:` → patch, `feat:` → minor,
+`feat!:` / `BREAKING CHANGE` → major. `docs:` / `chore:` / `ci:` don't cut a
+release on their own.
 
 Use **Actions → Build installers → Run workflow** to build artifacts for testing
-without publishing a release.
+without publishing anything.
+
+> Requires the repo setting **Settings → Actions → General → "Allow GitHub
+> Actions to create and approve pull requests"** (so the bot can open the
+> Release PR).
 
 ---
 
@@ -120,8 +128,9 @@ The installers track a **channel**, which lines up with the branch flow:
 - `main` — the **stable channel**. The WSL one-liner defaults to it
   (`REF="main"` in `installer/wsl/install.sh`), so a fresh `curl … | bash`
   always gets the latest stable config.
-- `vX.Y.Z` tag — a **pinned release**. Tagging `main` builds the `.exe`/`.dmg`
-  and publishes them to a GitHub Release for reproducible installs.
+- `vX.Y.Z` tag — a **pinned release**, cut by merging the release-please
+  Release PR (see [Releasing](#releasing)); builds the `.exe`/`.dmg` and
+  publishes them to a GitHub Release for reproducible installs.
 
 Pin a machine to a specific version instead of "latest stable":
 
