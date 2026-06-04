@@ -43,6 +43,13 @@ A complete terminal development environment using **WezTerm** and **Neovim**, tu
 
 ## Quick Install
 
+**No terminal? Use a native installer.** Download the latest `.exe` (Windows) or
+`.dmg` (macOS) from [Releases](../../releases) and double-click — it installs the
+terminals, Neovim, tooling, and configs with selectable components. See
+[`installer/`](./installer) for how it works and how releases are built.
+
+**From a checkout (dotfiles / symlink workflow):**
+
 ```bash
 git clone git@github.com:SejuneOh/WezTerm.git ~/dev/project/WezTerm
 cd ~/dev/project/WezTerm

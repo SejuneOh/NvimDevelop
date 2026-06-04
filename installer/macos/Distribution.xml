@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="2">
+    <title>WezTerm DevEnv</title>
+    <organization>com.sejuneoh</organization>
+    <options customize="always" require-scripts="false" hostArchitectures="arm64,x86_64" rootVolumeOnly="true"/>
+
+    <!-- Order matters: core lays down the shared payload + Neovim env first. -->
+    <choices-outline>
+        <line choice="core"/>
+        <line choice="nerd-font"/>
+        <line choice="wezterm"/>
+        <line choice="alacritty"/>
+        <line choice="claude"/>
+    </choices-outline>
+
+    <!-- Required, always selected, cannot be unchecked. -->
+    <choice id="core" title="Neovim 개발 환경 (필수)"
+            description="Neovim + CLI 도구(git, ripgrep, fzf, lazygit, node) + Neovim 설정 + 플러그인 부트스트랩. Homebrew로 설치됩니다."
+            enabled="false" selected="true">
+        <pkg-ref id="com.sejuneoh.wezterm-devenv.core"/>
+    </choice>
+
+    <choice id="nerd-font" title="D2CodingLigature Nerd Font"
+            description="아이콘 표시용 폰트. 설정에 폴백 폰트가 있어 선택 사항입니다." start_selected="true">
+        <pkg-ref id="com.sejuneoh.wezterm-devenv.nerd-font"/>
+    </choice>
+
+    <choice id="wezterm" title="WezTerm 터미널"
+            description="WezTerm 터미널 + 설정(~/.wezterm.lua)." start_selected="true">
+        <pkg-ref id="com.sejuneoh.wezterm-devenv.wezterm"/>
+    </choice>
+
+    <choice id="alacritty" title="Alacritty 터미널"
+            description="Alacritty 터미널 + 설정(~/.config/alacritty/alacritty.toml)." start_selected="false">
+        <pkg-ref id="com.sejuneoh.wezterm-devenv.alacritty"/>
+    </choice>
+
+    <choice id="claude" title="Claude Code 설정"
+            description="휴대용 Claude Code 설정(skills, hooks, settings, agents)을 ~/.claude 에 배치." start_selected="false">
+        <pkg-ref id="com.sejuneoh.wezterm-devenv.claude"/>
+    </choice>
+
+    <pkg-ref id="com.sejuneoh.wezterm-devenv.core"      version="0" onConclusion="none">core.pkg</pkg-ref>
+    <pkg-ref id="com.sejuneoh.wezterm-devenv.nerd-font" version="0" onConclusion="none">nerd-font.pkg</pkg-ref>
+    <pkg-ref id="com.sejuneoh.wezterm-devenv.wezterm"   version="0" onConclusion="none">wezterm.pkg</pkg-ref>
+    <pkg-ref id="com.sejuneoh.wezterm-devenv.alacritty" version="0" onConclusion="none">alacritty.pkg</pkg-ref>
+    <pkg-ref id="com.sejuneoh.wezterm-devenv.claude"    version="0" onConclusion="none">claude.pkg</pkg-ref>
+</installer-gui-script>

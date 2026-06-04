@@ -22,8 +22,10 @@ config.color_scheme = "Github Dark (Gogh)"
 -- Background Opacity
 config.window_background_opacity = 0.92
 
--- Default to WSL
-config.default_domain = "WSL:Ubuntu"
+-- Default to WSL on Windows only; on macOS/Linux use the local login shell.
+if wezterm.target_triple:find("windows") then
+  config.default_domain = "WSL:Ubuntu"
+end
 
 -- Tab Bar
 config.use_fancy_tab_bar = false
