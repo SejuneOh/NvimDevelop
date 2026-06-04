@@ -1,0 +1,107 @@
+{
+  "$comment": "Single source of truth for the native installers. Human/AI reference (like SETUP.json). The platform bootstrap scripts hardcode these lists with comments pointing back here; keep them in sync when adding tools.",
+  "schema_version": "1.0.0",
+  "product_name": "WezTerm DevEnv",
+  "product_id": "com.sejuneoh.wezterm-devenv",
+  "publisher": "SejuneOh",
+  "repo": "git@github.com:SejuneOh/WezTerm.git",
+  "components": {
+    "core": {
+      "selectable": false,
+      "always": true,
+      "description": "Neovim + CLI tooling + Neovim config + plugin bootstrap. Required by every install.",
+      "tools": {
+        "neovim": {
+          "minimum_version": "0.10",
+          "winget": "Neovim.Neovim",
+          "brew": "neovim",
+          "apt": "__manual__ (apt ships <0.10; download release tarball)"
+        },
+        "git":     { "winget": "Git.Git",                "brew": "git",     "apt": "git" },
+        "node":    { "winget": "OpenJS.NodeJS.LTS",      "brew": "node",    "apt": "__nvm__", "purpose": "LSP servers" },
+        "ripgrep": { "winget": "BurntSushi.ripgrep.MSVC","brew": "ripgrep", "apt": "ripgrep", "purpose": "Telescope live grep" },
+        "fzf":     { "winget": "junegunn.fzf",           "brew": "fzf",     "apt": "fzf",     "purpose": "Workspace switcher / fuzzy find" },
+        "lazygit": { "winget": "JesseDuffield.lazygit",  "brew": "lazygit", "apt": "__release__", "purpose": "<leader>gg git UI" }
+      },
+      "config": {
+        "source": "nvim",
+        "dest": {
+          "linux": "~/.config/nvim",
+          "macos": "~/.config/nvim",
+          "windows": "%LOCALAPPDATA%/nvim"
+        }
+      },
+      "post_install": "nvim --headless \"+Lazy! sync\" +qa"
+    },
+    "nerd-font": {
+      "selectable": true,
+      "default": true,
+      "description": "D2CodingLigature Nerd Font (icons in bufferline / lualine / nvim-tree). Config has fallbacks (Consolas, etc.) so this is optional.",
+      "font_family": "D2CodingLigature Nerd Font",
+      "source": "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/D2Coding.zip",
+      "brew_cask": "font-d2coding-nerd-font"
+    },
+    "wezterm": {
+      "selectable": true,
+      "default": true,
+      "group": "terminal",
+      "description": "WezTerm terminal emulator + config.",
+      "tools": { "wezterm": { "winget": "wez.wezterm", "brew_cask": "wezterm" } },
+      "config": {
+        "source": "wezterm/.wezterm.lua",
+        "dest": {
+          "linux": "~/.wezterm.lua",
+          "macos": "~/.wezterm.lua",
+          "windows": "%USERPROFILE%/.wezterm.lua"
+        }
+      },
+      "notes": "On Windows the config sets default_domain=WSL:Ubuntu (terminal runs on Windows, shell + Neovim live in WSL). The lua guards this so macOS uses the local login shell."
+    },
+    "alacritty": {
+      "selectable": true,
+      "default": false,
+      "group": "terminal",
+      "description": "Alacritty terminal emulator + OS-specific config.",
+      "tools": { "alacritty": { "winget": "Alacritty.Alacritty", "brew_cask": "alacritty" } },
+      "config": {
+        "source": { "macos": "alacritty/macos/alacritty.toml", "windows": "alacritty/windows/alacritty.toml", "linux": "alacritty/macos/alacritty.toml" },
+        "dest": {
+          "linux": "~/.config/alacritty/alacritty.toml",
+          "macos": "~/.config/alacritty/alacritty.toml",
+          "windows": "%APPDATA%/alacritty/alacritty.toml"
+        }
+      }
+    },
+    "claude": {
+      "selectable": true,
+      "default": false,
+      "description": "Portable Claude Code config (skills, hooks, settings, agents). Mirrors scripts/install-claude.sh.",
+      "config": {
+        "source": "claude",
+        "dest": {
+          "linux": "~/.claude",
+          "macos": "~/.claude",
+          "windows": "(installed into WSL home: ~/.claude)"
+        }
+      }
+    }
+  },
+  "targets": {
+    "windows": {
+      "artifact": "WezTerm-DevEnv-Setup.exe",
+      "builder": "Inno Setup (installer/windows/installer.iss)",
+      "model": "Terminals (WezTerm/Alacritty) install on Windows; Neovim + CLI + Claude config install inside WSL via the common bootstrap.",
+      "package_manager": "winget (terminals on Windows), apt+nvm (inside WSL)"
+    },
+    "macos": {
+      "artifact": "WezTerm-DevEnv.dmg",
+      "builder": "pkgbuild + productbuild + hdiutil (installer/macos/build.sh)",
+      "model": "Everything installs on macOS via Homebrew.",
+      "package_manager": "Homebrew"
+    },
+    "linux": {
+      "artifact": "(no native package) — run installer/common/install-nvim-env.sh directly",
+      "package_manager": "apt + nvm"
+    }
+  }
+}

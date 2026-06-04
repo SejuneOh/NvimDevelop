@@ -1,0 +1,20 @@
+#!/bin/bash
+# Component postinstall — runs the macOS bootstrap as the logged-in user.
+# Payload (repo content + installer scripts) was laid down by the core package
+# at /usr/local/share/wezterm-devenv. Each component pkg points COMPONENT at
+# itself; this file is templated per component by build.sh.
+set -u
+COMPONENT="core"
+PAYLOAD="/usr/local/share/wezterm-devenv"
+
+loggedInUser="$(/usr/bin/stat -f%Su /dev/console 2>/dev/null || echo root)"
+if [ -z "$loggedInUser" ] || [ "$loggedInUser" = "root" ] || [ "$loggedInUser" = "loginwindow" ]; then
+  echo "[postinstall] no console user; skipping ${COMPONENT}." >&2
+  exit 0
+fi
+uid="$(/usr/bin/id -u "$loggedInUser")"
+
+/bin/launchctl asuser "$uid" /usr/bin/sudo -u "$loggedInUser" /bin/bash \
+  "$PAYLOAD/installer/macos/bootstrap.sh" --payload "$PAYLOAD" --components "$COMPONENT" \
+  || echo "[postinstall] ${COMPONENT} bootstrap returned non-zero" >&2
+exit 0
