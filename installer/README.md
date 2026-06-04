@@ -101,6 +101,39 @@ without publishing a release.
 
 ---
 
+## Updating
+
+You don't reinstall from scratch to pick up config changes — how you update
+depends on how the machine was set up:
+
+| How it was installed | How to update |
+|----------------------|---------------|
+| **Native installer** (`.exe` / `.dmg`) | Download the newer release and run it again. It backs up existing configs as `*.backup-<timestamp>` and re-bundles the snapshot. |
+| **WSL / Linux one-liner** | Re-run the exact same `curl … \| bash` — it is idempotent: it re-fetches the channel and re-copies the configs. |
+| **Dotfiles symlink** (`scripts/install.sh`) | `git pull` in the checkout. Because the live configs are symlinked, the change is live immediately — nothing to reinstall. |
+
+### Release channels (dev → main → tag)
+
+The installers track a **channel**, which lines up with the branch flow:
+
+- `dev` — integration / staging. Builds do **not** run here; nothing ships from it.
+- `main` — the **stable channel**. The WSL one-liner defaults to it
+  (`REF="main"` in `installer/wsl/install.sh`), so a fresh `curl … | bash`
+  always gets the latest stable config.
+- `vX.Y.Z` tag — a **pinned release**. Tagging `main` builds the `.exe`/`.dmg`
+  and publishes them to a GitHub Release for reproducible installs.
+
+Pin a machine to a specific version instead of "latest stable":
+
+```bash
+curl -fsSL .../installer/wsl/install.sh | bash -s -- --ref v1.2.0
+```
+
+So the rule of thumb: **edit configs on `dev`, merge up to `main` to release to the
+stable channel, tag when you want a downloadable, pinned `.exe`/`.dmg`.**
+
+---
+
 ## Building locally
 
 **macOS** (needs a Mac — `pkgbuild`/`hdiutil` are macOS-only):
