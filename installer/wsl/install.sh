@@ -125,4 +125,4 @@ elif ! is_wsl && { has wezterm || has alacritty; }; then
   warn "with your package manager; the configs go to ~/.wezterm.lua and ~/.config/alacritty/."
 fi
 
-info "Done."
+info "Done. Installed components: $COMPONENTS"
