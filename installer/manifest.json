@@ -100,8 +100,13 @@
       "package_manager": "Homebrew"
     },
     "linux": {
-      "artifact": "(no native package) — run installer/common/install-nvim-env.sh directly",
+      "artifact": "(no native package) — curl installer/wsl/install.sh, or run installer/common/install-nvim-env.sh against a checkout",
       "package_manager": "apt + nvm"
+    },
+    "wsl": {
+      "artifact": "curl-able installer/wsl/install.sh",
+      "model": "For shells already inside WSL: installs Neovim + CLI + Claude in WSL, and places the GUI terminal config on the Windows side (%USERPROFILE%/%APPDATA% via /mnt/c) with a best-effort winget.exe install over WSL interop.",
+      "one_liner": "curl -fsSL https://raw.githubusercontent.com/SejuneOh/WezTerm/main/installer/wsl/install.sh | bash"
     }
   }
 }

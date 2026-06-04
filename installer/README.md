@@ -38,6 +38,26 @@ The canonical list of tool IDs (winget / brew / apt) lives in
   Neovim + CLI tooling + Claude config install **inside WSL** (the `.exe` shells
   into your default WSL distro and runs the shared bash installer). This matches
   the real workflow: a Windows terminal app driving a WSL dev environment.
+- **WSL / Linux** — for a shell already inside WSL (or plain Linux), there is no
+  GUI installer; use the curl one-liner below.
+
+### Already inside WSL? (one-liner)
+
+If you're sitting in a WSL shell and don't want to run the Windows `.exe`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/SejuneOh/WezTerm/main/installer/wsl/install.sh | bash
+# pick components / a release tag:
+curl -fsSL .../installer/wsl/install.sh | bash -s -- --components core,nerd-font,wezterm,claude --ref v1.0.0
+```
+
+It installs Neovim + CLI + Claude config **inside WSL**, and — because GUI
+terminals run on the Windows host, not in WSL — it also places the WezTerm /
+Alacritty config on the **Windows side** (`%USERPROFILE%` / `%APPDATA%`, reached
+via `/mnt/c`) and best-effort installs the terminal with `winget.exe` over WSL
+interop. If `winget.exe` isn't reachable from your distro it prints the manual
+step instead. On plain Linux it skips the terminal (install it from your package
+manager) and just sets up Neovim.
 
 ---
 
@@ -48,6 +68,8 @@ installer/
 ├── manifest.json                 # single source of truth (tool IDs, paths, components)
 ├── common/
 │   └── install-nvim-env.sh        # shared Neovim+CLI+config installer (Linux/WSL/macOS)
+├── wsl/
+│   └── install.sh                 # curl-able bootstrap for shells already inside WSL/Linux
 ├── windows/
 │   ├── bootstrap.ps1              # winget terminals + font + WSL Neovim setup
 │   └── installer.iss              # Inno Setup script → WezTerm-DevEnv-Setup.exe
