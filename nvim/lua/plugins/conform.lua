@@ -19,11 +19,16 @@ return {
         python = { "isort", "black" },
         cs = { "csharpier" },
       },
-      format_on_save = {
-        lsp_format = "fallback", -- conform 최신 API (구 lsp_fallback)
-        async = false,
-        timeout_ms = 1000,
-      },
+      format_on_save = function(bufnr)
+        if vim.bo[bufnr].filetype == "cs" then
+          return nil
+        end
+        return {
+          lsp_format = "fallback", -- conform 최신 API (구 lsp_fallback)
+          async = false,
+          timeout_ms = 1000,
+        }
+      end,
     })
 
     -- 수동 포맷 단축키
