@@ -45,7 +45,14 @@ local function smart_bdelete(force)
   end
 
   if vim.api.nvim_buf_is_valid(bufnr) then
-    vim.api.nvim_buf_delete(bufnr, { force = force or false })
+    if vim.bo[bufnr].modified and not force then
+      vim.notify("저장되지 않은 변경이 있습니다. <leader>bD 로 강제 닫기.", vim.log.levels.WARN)
+      return
+    end
+    local ok, err = pcall(vim.api.nvim_buf_delete, bufnr, { force = force or false })
+    if not ok then
+      vim.notify("버퍼 닫기 실패: " .. tostring(err), vim.log.levels.ERROR)
+    end
   end
 end
 

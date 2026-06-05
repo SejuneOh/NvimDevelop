@@ -26,6 +26,7 @@ return {
       { "<leader>s", group = "split/search" },
       { "<leader>sn", group = "noice messages" },
       { "<leader>t", group = "test" },
+      { "<leader>T", group = "terminal" },
       { "<leader>u", group = "ui toggles" },
       { "<leader>w", group = "window/session" },
       { "<leader>x", group = "trouble" },
