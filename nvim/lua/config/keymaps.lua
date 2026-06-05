@@ -45,7 +45,14 @@ local function smart_bdelete(force)
   end
 
   if vim.api.nvim_buf_is_valid(bufnr) then
-    vim.api.nvim_buf_delete(bufnr, { force = force or false })
+    if vim.bo[bufnr].modified and not force then
+      vim.notify("저장되지 않은 변경이 있습니다. <leader>bD 로 강제 닫기.", vim.log.levels.WARN)
+      return
+    end
+    local ok, err = pcall(vim.api.nvim_buf_delete, bufnr, { force = force or false })
+    if not ok then
+      vim.notify("버퍼 닫기 실패: " .. tostring(err), vim.log.levels.ERROR)
+    end
   end
 end
 
@@ -54,3 +61,12 @@ keymap.set("n", "<leader>bD", function() smart_bdelete(true) end, { desc = "버�
 keymap.set("n", "<leader>bo", "<cmd>BufferLineCloseOthers<CR>", { desc = "다른 버퍼 모두 닫기" })
 keymap.set("n", "<leader>bl", "<cmd>BufferLineCloseLeft<CR>", { desc = "왼쪽 버퍼 모두 닫기" })
 keymap.set("n", "<leader>br", "<cmd>BufferLineCloseRight<CR>", { desc = "오른쪽 버퍼 모두 닫기" })
+
+-- 터미널 모드 탈출 단축키 (글로벌 terminal-mode 매핑)
+-- 기본 <C-\><C-n> 의 <C-n> 이 zellij Resize mode 와 충돌하므로
+-- <Esc><Esc> 두 번으로 terminal-job → terminal-normal 전환.
+-- (셸 안에서 vim 을 다시 실행해도 단발 <Esc> 는 그대로 셸로 전달되어 안전)
+--
+-- 글로벌(non-buffer-local) 매핑이므로 모든 터미널 버퍼에 즉시 적용 —
+-- TermOpen autocmd 방식과 달리 nvim 재시작이나 새 터미널 오픈 불필요.
+vim.keymap.set("t", "<Esc><Esc>", [[<C-\><C-n>]], { desc = "Terminal: normal mode" })
