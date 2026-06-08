@@ -304,6 +304,11 @@ All plugin specs live in `nvim/lua/plugins/` — one file per plugin.
 ├── nvim/
 │   ├── init.lua               — Neovim entry point (bootstraps lazy.nvim)
 │   └── lua/plugins/           — one file per plugin spec
+├── alacritty/                 — alternative terminal config (macOS/Windows) + README
+│   └── README.md
+├── zellij/                    — terminal multiplexer config (tabs/splits/sessions)
+│   ├── config.kdl             — full keybind + plugin config
+│   └── README.md
 ├── claude/                    — portable Claude Code config (see Claude Code Setup)
 │   ├── CLAUDE.md
 │   ├── settings.json

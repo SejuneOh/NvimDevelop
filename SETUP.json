@@ -8,11 +8,13 @@
   "entry_points": {
     "wezterm_config": "wezterm/.wezterm.lua",
     "neovim_config": "nvim/init.lua",
+    "zellij_config": "zellij/config.kdl",
     "install_script": "scripts/install.sh"
   },
   "install_paths": {
     "wezterm": "~/.config/wezterm/wezterm.lua",
-    "neovim": "~/.config/nvim"
+    "neovim": "~/.config/nvim",
+    "zellij": "~/.config/zellij/config.kdl"
   },
   "prerequisites": [
     {
