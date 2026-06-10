@@ -11,3 +11,7 @@ nvim/lazy-lock.json.bak
 # Claude project-launcher: keep the example, gitignore the real registry
 # (real registry contains user-specific project paths)
 claude/skills/project-launcher/projects.json
+
+# Claude Code per-machine state (local settings, temp worktrees)
+# Portable Claude config lives in claude/ (no dot), which stays tracked.
+.claude/
