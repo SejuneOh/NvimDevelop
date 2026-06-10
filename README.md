@@ -488,6 +488,9 @@ config that mirrors `~/.claude/`. Install via [Path 1](#path-1--native-installer
 │   └── lua/
 │       ├── config/            — options.lua, keymaps.lua
 │       └── plugins/           — one file per plugin spec (~40)
+├── zellij/                    — terminal multiplexer config (tabs/splits/sessions)
+│   ├── config.kdl             — full keybind + plugin config
+│   └── README.md
 ├── claude/                    — portable Claude Code config (mirrors ~/.claude/)
 │   ├── CLAUDE.md
 │   ├── settings.json

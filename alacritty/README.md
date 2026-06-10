@@ -36,8 +36,8 @@ Create the `~/.config/alacritty` folder first if it does not exist.
   mappings.
 - `live_config_reload` is enabled under `[general]`, so saving the file applies
   changes without restarting Alacritty.
-- Tabs/splits/workspaces are not built into Alacritty — pair it with `zellij`
-  (or tmux) for that.
+- Tabs/splits/workspaces are not built into Alacritty — pair it with
+  [`zellij`](../zellij) (config included in this repo) or tmux for that.
 
 ### Theme
 
