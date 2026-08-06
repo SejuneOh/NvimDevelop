@@ -6,7 +6,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 
 # Obsidian Note Manager
 
-Manages notes in the Obsidian vault at `$CLAUDE_OBSIDIAN_VAULT` (set per machine, e.g. `/mnt/c/dev/note/Obsidian` on WSL).
+Manages notes in the Obsidian vault at `$CLAUDE_OBSIDIAN_VAULT` (set per machine, e.g. `~/Document/note/Obsidian_claude`).
 
 ## Argument Parsing
 
@@ -22,6 +22,8 @@ First argument → `TYPE`, remaining → `TITLE`. Arguments use `--` prefix.
 - `/obsidian --archive` → TYPE=archive (current branch)
 - `/obsidian --archive slug` → TYPE=archive, TARGET=slug
 - `/obsidian --archive --list` → TYPE=archive-list
+- `/obsidian --pull` → TYPE=pull (sync vault from remote `main`)
+- `/obsidian --push` → TYPE=push (sync local vault changes to remote `main`)
 
 No arguments defaults to `help`. Arguments without `--` are treated the same (backward compat).
 
@@ -53,6 +55,8 @@ Types:
   --status               Show current branch project note and recent inbox
   --archive [slug]       Archive a project note (current branch if no slug)
   --archive --list       List archivable project notes
+  --pull                 Pull vault main branch from remote (stash/pop local changes)
+  --push                 Commit and push local vault changes to remote main
 
 Examples:
   /obsidian --inbox meeting notes
@@ -64,6 +68,8 @@ Examples:
   /obsidian --archive
   /obsidian --archive myrepo-main
   /obsidian --archive --list
+  /obsidian --pull
+  /obsidian --push
 ```
 
 ### inbox
@@ -352,6 +358,228 @@ Inbox (recent 5):
   - {filename} - {title}
   - ...
 ```
+
+### pull
+
+Sync the Obsidian vault from remote — pull the latest `main` branch.
+
+**Purpose:** keep the local Obsidian vault up-to-date with the remote.
+
+**Conflict policy:**
+- Pull/merge conflict (committed local vs remote): take **remote** (`git checkout --theirs`).
+- Stash-pop conflict (just-pulled remote vs stashed local work): take **stash** (`git checkout --theirs` — in stash-pop, `theirs` is the stash).
+- For every conflict, capture and report the **discarded** side's full content so nothing is silently lost.
+
+#### Steps
+
+1. Change to vault directory and verify it is a git repository:
+
+```bash
+cd "{VAULT}" || { echo "Vault not found: {VAULT}"; exit 1; }
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { echo "Vault is not a git repository: {VAULT}"; exit 1; }
+```
+
+2. Ensure we are on `main` (record the original branch so we can restore it on failure):
+
+```bash
+ORIG_BRANCH=$(git branch --show-current)
+git checkout main
+```
+
+3. Detect uncommitted changes (tracked + untracked):
+
+```bash
+DIRTY=0
+if [ -n "$(git status --porcelain)" ]; then DIRTY=1; fi
+```
+
+4. If dirty, stash with a labeled entry (include untracked files):
+
+```bash
+TIME=$(date +%H%M%S)
+STASH_LABEL="obsidian-pull-{TODAY}-${TIME}"
+git stash push -u -m "$STASH_LABEL"
+STASHED=1
+```
+
+5. Fetch and pull `main` from remote (merge, not rebase — so conflicts surface as merge conflicts):
+
+```bash
+git fetch origin main
+git pull --no-rebase origin main
+```
+
+6. If pull produced merge conflicts (`git ls-files -u` non-empty):
+   - For each conflicted file: read the local ("ours") version and store its full content for the report, then resolve to remote.
+
+   ```bash
+   PULL_CONFLICTS=$(git diff --name-only --diff-filter=U)
+   for f in $PULL_CONFLICTS; do
+     # Capture discarded ("ours" = local committed) content via the index stage 2:
+     git show ":2:$f" > "/tmp/obsidian-pull-conflict-${f//\//_}.local" 2>/dev/null || true
+     git checkout --theirs -- "$f"
+     git add -- "$f"
+   done
+   git commit --no-edit
+   ```
+
+7. If a stash was created in step 4, pop it:
+
+```bash
+git stash pop
+```
+
+8. If `git stash pop` produced conflicts:
+   - For each conflicted file: read the just-pulled ("ours") version and store its full content for the report, then resolve to the stash side.
+
+   ```bash
+   POP_CONFLICTS=$(git diff --name-only --diff-filter=U)
+   for f in $POP_CONFLICTS; do
+     # Capture discarded ("ours" = remote post-pull) content via the index stage 2:
+     git show ":2:$f" > "/tmp/obsidian-pop-conflict-${f//\//_}.remote" 2>/dev/null || true
+     git checkout --theirs -- "$f"
+     git add -- "$f"
+   done
+   ```
+
+   `git stash pop` consumes the stash entry even on conflict — verify with `git stash list` and only call `git stash drop` if the entry still appears.
+
+9. If a stash was created AND pop succeeded with no conflicts, the entry was already dropped by `pop`. If pop left the stash on the stack (rare — only with `--keep-index`), drop it explicitly:
+
+```bash
+if git stash list | grep -q "$STASH_LABEL"; then
+  git stash drop "stash@{0}"
+fi
+```
+
+10. Restore the original branch if it differed from `main`:
+
+```bash
+if [ "$ORIG_BRANCH" != "main" ] && [ -n "$ORIG_BRANCH" ]; then
+  git checkout "$ORIG_BRANCH"
+fi
+```
+
+11. Report in Korean. Always include:
+    - Pulled commit summary: `git log --oneline ORIG_HEAD..HEAD` (commits brought in).
+    - Whether a stash was created and whether it was popped cleanly.
+    - For each conflict (pull or stash-pop): file path, which side was kept, and the **full content of the discarded side** so the user can manually merge if needed.
+
+   Example output shape:
+
+   ```
+   ✅ Obsidian vault 최신화 완료
+   - 받아온 커밋: 3개
+     • abc1234 docs: ...
+     • def5678 fix: ...
+   - 스택: 1개 stash → pop 적용 후 자동 drop
+
+   ⚠️ 충돌 처리 (1건)
+   - inbox/2026-05-29-meeting.md (pull merge)
+     → 리모트 채택. 버려진 로컬 버전 전체:
+     <discarded content>
+   ```
+
+### push
+
+Sync local Obsidian vault changes to remote — auto-commit any pending work, integrate remote, then push `main`.
+
+**Purpose:** publish local Obsidian vault changes to the remote.
+
+**Conflict policy:** identical to `--pull`.
+- Pull/merge conflict (during the pre-push integrate): take **remote** (`git checkout --theirs`).
+- Stash-pop conflict (rare — only used if uncommittable state remains): take **stash** (`git checkout --theirs`).
+- Report the full content of the discarded side for every conflict.
+
+#### Steps
+
+1. Change to vault directory and verify it is a git repository (same as `--pull` step 1).
+
+2. Ensure we are on `main` (record original branch for restoration):
+
+```bash
+ORIG_BRANCH=$(git branch --show-current)
+git checkout main
+```
+
+3. Detect uncommitted changes:
+
+```bash
+DIRTY=0
+if [ -n "$(git status --porcelain)" ]; then DIRTY=1; fi
+```
+
+4. If dirty, stage everything and create an auto-commit:
+
+```bash
+git add -A
+git commit -m "obsidian: sync {TODAY}"
+```
+
+5. Fetch remote and check divergence:
+
+```bash
+git fetch origin main
+LOCAL=$(git rev-parse main)
+REMOTE=$(git rev-parse origin/main)
+BASE=$(git merge-base main origin/main)
+```
+
+6. Decide based on divergence:
+   - `$LOCAL` == `$REMOTE` → nothing to push, skip to step 9 with "already up-to-date".
+   - `$BASE` == `$REMOTE` and `$LOCAL` != `$REMOTE` → local is ahead, fast-forward push possible. Skip to step 8.
+   - `$BASE` == `$LOCAL` and `$LOCAL` != `$REMOTE` → remote is ahead, must integrate before push (step 7).
+   - Otherwise (diverged) → must integrate before push (step 7).
+
+7. Integrate remote via merge (so conflicts surface as merge conflicts, not rebase):
+
+```bash
+git pull --no-rebase origin main
+```
+
+   If merge produced conflicts (`git ls-files -u` non-empty):
+   - For each conflicted file: capture local ("ours") content for the report, then resolve to remote.
+
+   ```bash
+   MERGE_CONFLICTS=$(git diff --name-only --diff-filter=U)
+   for f in $MERGE_CONFLICTS; do
+     git show ":2:$f" > "/tmp/obsidian-push-conflict-${f//\//_}.local" 2>/dev/null || true
+     git checkout --theirs -- "$f"
+     git add -- "$f"
+   done
+   git commit --no-edit
+   ```
+
+8. Push `main` to remote:
+
+```bash
+git push origin main
+```
+
+9. Restore the original branch if it differed from `main`:
+
+```bash
+if [ "$ORIG_BRANCH" != "main" ] && [ -n "$ORIG_BRANCH" ]; then
+  git checkout "$ORIG_BRANCH"
+fi
+```
+
+10. Report in Korean. Always include:
+    - Pushed commit summary: `git log --oneline origin/main@{1}..origin/main` (commits sent to remote).
+    - Whether an auto-commit was created (and its message).
+    - Whether a merge with remote was needed.
+    - For each conflict during the integrate step: file path, which side was kept, and the **full content of the discarded side**.
+
+   Example output shape:
+
+   ```
+   ✅ Obsidian vault remote 동기화 완료
+   - 자동 커밋: "obsidian: sync 2026-05-29" (변경 12 파일)
+   - 리모트 통합: 머지 1건 (3 commits)
+   - 푸시 완료: 4 commits → origin/main
+
+   ⚠️ 충돌 처리 (0건)
+   ```
 
 ## Common Rules
 
