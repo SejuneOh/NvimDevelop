@@ -12,18 +12,32 @@ Manages notes in the Obsidian vault at `$CLAUDE_OBSIDIAN_VAULT` (set per machine
 
 First argument → `TYPE`, remaining → `TITLE`. Arguments use `--` prefix.
 
+Tokens **after** the first argument that start with `--` are options, not part of `TITLE`. Strip
+them from `TITLE` before using it. Recognized options: `--list` (sets `MODE=list`) and
+`--tag-article` (sets `ARTICLE=1`).
+
 - `/obsidian --help` → TYPE=help
 - `/obsidian --inbox title` → TYPE=inbox, TITLE=title
 - `/obsidian --project` → TYPE=project (title derived from branch)
 - `/obsidian --decision title` → TYPE=decision, TITLE=title
 - `/obsidian --knowledge title` → TYPE=knowledge, TITLE=title
 - `/obsidian --reference title` → TYPE=reference, TITLE=title
+- `/obsidian --inbox --list` → TYPE=inbox, MODE=list
+- `/obsidian --project --list` → TYPE=project, MODE=list
+- `/obsidian --decision --list` → TYPE=decision, MODE=list
+- `/obsidian --knowledge --list` → TYPE=knowledge, MODE=list
+- `/obsidian --reference --list` → TYPE=reference, MODE=list
+- `/obsidian --knowledge title --tag-article` → TYPE=knowledge, TITLE=title, ARTICLE=1
+- `/obsidian --tag-article slug [slug...]` → TYPE=tag-article, TARGETS=slugs
 - `/obsidian --status` → TYPE=status
 - `/obsidian --archive` → TYPE=archive (current branch)
 - `/obsidian --archive slug` → TYPE=archive, TARGET=slug
 - `/obsidian --archive --list` → TYPE=archive-list
 - `/obsidian --pull` → TYPE=pull (sync vault from remote `main`)
 - `/obsidian --push` → TYPE=push (sync local vault changes to remote `main`)
+
+`MODE=list` runs the **list** action for that TYPE instead of create/update. `--tag-article` works
+both as an option on a create/update action and as a TYPE of its own.
 
 No arguments defaults to `help`. Arguments without `--` are treated the same (backward compat).
 
@@ -58,12 +72,25 @@ Types:
   --pull                 Pull vault main branch from remote (stash/pop local changes)
   --push                 Commit and push local vault changes to remote main
 
+Options (append to any of the above):
+  --list                 List that section's notes instead of creating
+                         (--inbox/--project/--decision/--knowledge/--reference)
+  --tag-article          Also attach the article/candidate tag
+
+Standalone:
+  --tag-article <slug>   Attach article/candidate to an existing note
+
 Examples:
   /obsidian --inbox meeting notes
   /obsidian --project
   /obsidian --decision API versioning strategy
   /obsidian --knowledge EF Core migration patterns
   /obsidian --reference Azure Search official docs
+  /obsidian --knowledge EF Core migration patterns --tag-article
+  /obsidian --inbox --list
+  /obsidian --project --list
+  /obsidian --knowledge --list
+  /obsidian --tag-article ef-core-migration-patterns
   /obsidian --status
   /obsidian --archive
   /obsidian --archive myrepo-main
@@ -240,6 +267,106 @@ description: {TITLE}
 ```
 
 4. Print file path after create/update.
+
+### list
+
+Lists the notes of one section. Runs whenever `MODE=list` is set (e.g. `/obsidian --knowledge --list`).
+
+#### Directory per TYPE
+
+| TYPE | Directory | Archive directory |
+|---|---|---|
+| inbox | `{VAULT}/inbox/` | — |
+| project | `{VAULT}/projects/` | `{VAULT}/projects/archive/` |
+| decision | `{VAULT}/decisions/` | — |
+| knowledge | `{VAULT}/knowledge/` | `{VAULT}/knowledge/archive/` |
+| reference | `{VAULT}/references/` | — |
+
+#### Steps
+
+1. List files with `Bash`, not `Glob` (see Common Rules). `-maxdepth 1` keeps the section's
+   `archive/` subdirectory out of the list:
+
+```bash
+find "{VAULT}/{dir}" -maxdepth 1 -name '*.md' 2>/dev/null | sort
+```
+
+2. If the directory is missing or has no `.md` files, print `"{TYPE} 노트가 없습니다."` and exit.
+   A missing directory is not an error — some sections may not exist yet (`references/` typically
+   does not until the first reference note is created).
+
+3. Collect display fields from each note's **frontmatter and first `#` heading only**. Do not read
+   full bodies — the list must stay cheap on sections with dozens of notes.
+
+4. Detect which notes carry an article tag in one pass:
+
+```bash
+find "{VAULT}/{dir}" -maxdepth 1 -name '*.md' -exec grep -lE '^[[:space:]]*-[[:space:]]*article/' {} + 2>/dev/null
+```
+
+5. Sort:
+   - inbox → filename descending (filenames are date-prefixed, so this is newest-first)
+   - all others → `updated` descending when the field exists, else `created` descending, else
+     filename ascending
+
+6. Print these columns per TYPE, one note per line:
+
+| TYPE | Columns |
+|---|---|
+| inbox | date (from filename), title |
+| project | slug, branch, issue, status tag, updated |
+| decision | created, title, status field |
+| knowledge | updated, title, topic tags |
+| reference | created, title, url |
+
+   Append `[article]` to any note carrying an `article/` tag, so each section list doubles as the
+   article-tag overview.
+
+7. Header line: TYPE and total count. When the TYPE has an archive directory, append the archived
+   count — archived notes are counted but **not** mixed into the list. Use `--archive --list` for
+   project archive candidates.
+
+8. Never truncate silently. If the output is capped for readability, say how many notes were
+   omitted and how to see the rest.
+
+#### Output format
+
+```
+knowledge (36개, archived 2개)
+  2026-07-31  EF Core 마이그레이션 패턴        topic/ef-core, topic/migration  [article]
+  2026-07-28  Check FK 안티패턴                topic/ef-core
+  ...
+```
+
+### tag-article
+
+Marks a note as article material. `article/` is its own tag namespace, deliberately separate from
+`type/`: `type/` holds one value per note, so a knowledge note could not also be typed as an
+article. The tag written is `article/candidate`. Finished manuscripts keep using `type/blog-post`
+in `blog/` — this tag is for source notes that are worth writing up.
+
+#### As an option on create/update
+
+When `ARTICLE=1` is set on an `--inbox` / `--project` / `--decision` / `--knowledge` /
+`--reference` action, add `article/candidate` to the note's `tags:` during that same
+create/update, and say so in the printed summary.
+
+#### As a standalone action
+
+1. Resolve each TARGET slug across all section directories:
+
+```bash
+find "{VAULT}" -name "*{TARGET}*.md" -not -path "*/.obsidian/*" -not -path "*/_templates/*"
+```
+
+2. Exactly one match → apply. Several matches → print the candidates and stop **without modifying
+   anything**. No match → print the closest names and stop.
+
+3. Apply the tag per **Tag insertion** in Common Rules.
+
+4. Report per target: file path, and whether the tag was added or already present.
+
+Several slugs may be passed in one call; report each one separately.
 
 ### archive
 
@@ -587,9 +714,16 @@ fi
   ```bash
   test -f "{VAULT}/projects/{SLUG}.md" && echo "exists" || echo "not found"
   ```
-- **Directory listing**: Use `Bash` `ls` instead of `Glob`.
+- **Directory listing**: Use `Bash` instead of `Glob`. Prefer `find <dir> -maxdepth 1 -name '*.md'`
+  over `ls <dir>/*.md` — under zsh an unmatched glob raises `no matches found` that `2>/dev/null`
+  does not suppress, and `-maxdepth 1` keeps `archive/` subdirectories out of the result.
 - **Filename slug**: Spaces → `-`, remove special chars, lowercase. Keep Korean chars as-is.
 - **Wikilinks**: Link related notes as `[[note-name]]`.
-- **Tags**: Use `status/`, `project/`, `type/`, `topic/` prefixes.
+- **Tags**: Use `status/`, `project/`, `type/`, `topic/`, `article/` prefixes.
+- **Tag insertion**: When adding a tag to an existing note, insert it as a new list item after the
+  last entry of the `tags:` block. If the note has frontmatter but no `tags:` block, add the block.
+  If the note has no frontmatter at all, create a `---` block at the very top. Never add a tag that
+  is already present — report the note as unchanged instead. Refresh `updated` only when that field
+  already exists. Never touch the body.
 - **Output**: Print file path and brief summary in Korean after every action.
 - **Protect existing content**: Never overwrite. On update, preserve existing content and modify only changed sections.
