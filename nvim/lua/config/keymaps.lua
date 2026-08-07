@@ -82,13 +82,30 @@ local function windows_browser()
   return os.getenv("BROWSER") or "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
 end
 
+-- 실제 디스크에 존재하는 파일일 때만 경로를 돌려준다.
+-- NvimTree 같은 특수 버퍼는 "%:p" 가 NvimTree_1 처럼 파일 아닌 이름으로 잡히므로
+-- 빈 문자열 검사만으로는 걸러지지 않는다.
+local function current_real_file()
+  local path = vim.fn.expand("%:p")
+  if path == "" then
+    vim.notify("저장되지 않은 버퍼입니다.", vim.log.levels.WARN)
+    return nil
+  end
+  local stat = vim.uv.fs_stat(path)
+  if not stat or stat.type ~= "file" then
+    vim.notify("파일 버퍼가 아닙니다. HTML 파일을 연 창에서 실행하세요.", vim.log.levels.WARN)
+    return nil
+  end
+  return path
+end
+
 -- 현재 파일을 브라우저로 열기 (file:// — 정적 HTML 용)
 keymap.set("n", "<leader>pb", function()
-  if vim.fn.expand("%:p") == "" then
-    vim.notify("저장되지 않은 버퍼입니다.", vim.log.levels.WARN)
+  local file = current_real_file()
+  if not file then
     return
   end
-  local winpath = vim.trim(vim.fn.system({ "wslpath", "-w", vim.fn.expand("%:p") }))
+  local winpath = vim.trim(vim.fn.system({ "wslpath", "-w", file }))
   if vim.v.shell_error ~= 0 then
     vim.notify("wslpath 변환 실패: " .. winpath, vim.log.levels.ERROR)
     return
@@ -103,8 +120,7 @@ end, { desc = "브라우저로 열기 (file://)" })
 local preview_port = 8000
 
 keymap.set("n", "<leader>ps", function()
-  if vim.fn.expand("%:p") == "" then
-    vim.notify("저장되지 않은 버퍼입니다.", vim.log.levels.WARN)
+  if not current_real_file() then
     return
   end
   local dir, name = vim.fn.expand("%:p:h"), vim.fn.expand("%:t")
