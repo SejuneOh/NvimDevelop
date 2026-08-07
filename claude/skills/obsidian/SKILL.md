@@ -75,10 +75,10 @@ Types:
 Options (append to any of the above):
   --list                 List that section's notes instead of creating
                          (--inbox/--project/--decision/--knowledge/--reference)
-  --tag-article          Also attach the article/candidate tag
+  --tag-article          Also attach the article-candidate tag
 
 Standalone:
-  --tag-article <slug>   Attach article/candidate to an existing note
+  --tag-article <slug>   Attach article-candidate to an existing note
 
 Examples:
   /obsidian --inbox meeting notes
@@ -301,7 +301,7 @@ find "{VAULT}/{dir}" -maxdepth 1 -name '*.md' 2>/dev/null | sort
 4. Detect which notes carry an article tag in one pass:
 
 ```bash
-find "{VAULT}/{dir}" -maxdepth 1 -name '*.md' -exec grep -lE '^[[:space:]]*-[[:space:]]*article/' {} + 2>/dev/null
+find "{VAULT}/{dir}" -maxdepth 1 -name '*.md' -exec grep -lE '^[[:space:]]*-[[:space:]]*article-candidate[[:space:]]*$' {} + 2>/dev/null
 ```
 
 5. Sort:
@@ -319,8 +319,8 @@ find "{VAULT}/{dir}" -maxdepth 1 -name '*.md' -exec grep -lE '^[[:space:]]*-[[:s
 | knowledge | updated, title, topic tags |
 | reference | created, title, url |
 
-   Append `[article]` to any note carrying an `article/` tag, so each section list doubles as the
-   article-tag overview.
+   Append `[article]` to any note carrying the `article-candidate` tag, so each section list
+   doubles as the article-tag overview.
 
 7. Header line: TYPE and total count. When the TYPE has an archive directory, append the archived
    count — archived notes are counted but **not** mixed into the list. Use `--archive --list` for
@@ -340,15 +340,15 @@ knowledge (36개, archived 2개)
 
 ### tag-article
 
-Marks a note as article material. `article/` is its own tag namespace, deliberately separate from
-`type/`: `type/` holds one value per note, so a knowledge note could not also be typed as an
-article. The tag written is `article/candidate`. Finished manuscripts keep using `type/blog-post`
-in `blog/` — this tag is for source notes that are worth writing up.
+Marks a note as article material. The tag written is `article-candidate` — a flat tag, deliberately
+separate from `type/`: `type/` holds one value per note, so a knowledge note could not also be
+typed as an article. Finished manuscripts keep using `type/blog-post` in `blog/` — this tag is for
+source notes that are worth writing up.
 
 #### As an option on create/update
 
 When `ARTICLE=1` is set on an `--inbox` / `--project` / `--decision` / `--knowledge` /
-`--reference` action, add `article/candidate` to the note's `tags:` during that same
+`--reference` action, add `article-candidate` to the note's `tags:` during that same
 create/update, and say so in the printed summary.
 
 #### As a standalone action
@@ -719,7 +719,7 @@ fi
   does not suppress, and `-maxdepth 1` keeps `archive/` subdirectories out of the result.
 - **Filename slug**: Spaces → `-`, remove special chars, lowercase. Keep Korean chars as-is.
 - **Wikilinks**: Link related notes as `[[note-name]]`.
-- **Tags**: Use `status/`, `project/`, `type/`, `topic/`, `article/` prefixes.
+- **Tags**: Use `status/`, `project/`, `type/`, `topic/` prefixes, plus the flat `article-candidate` tag.
 - **Tag insertion**: When adding a tag to an existing note, insert it as a new list item after the
   last entry of the `tags:` block. If the note has frontmatter but no `tags:` block, add the block.
   If the note has no frontmatter at all, create a `---` block at the very top. Never add a tag that
