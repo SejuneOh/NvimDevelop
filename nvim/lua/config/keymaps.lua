@@ -70,3 +70,73 @@ keymap.set("n", "<leader>br", "<cmd>BufferLineCloseRight<CR>", { desc = "오른�
 -- 글로벌(non-buffer-local) 매핑이므로 모든 터미널 버퍼에 즉시 적용 —
 -- TermOpen autocmd 방식과 달리 nvim 재시작이나 새 터미널 오픈 불필요.
 vim.keymap.set("t", "<Esc><Esc>", [[<C-\><C-n>]], { desc = "Terminal: normal mode" })
+
+-- HTML 브라우저 미리보기 (WSL)
+--
+-- 내장 gx / vim.ui.open() 은 핸들러를 xdg-open → wslview → explorer.exe 순으로 찾는다.
+-- 이 환경엔 xdg-open 이 설치돼 있어 항상 먼저 잡히는데, mimeinfo.cache 가 없어
+-- "No applications found for mimetype: text/html" 로 실패한다. exit code 는 0 이라
+-- nvim 쪽에선 조용히 아무 일도 안 일어난다. (wslu 를 깔아도 탐색 순서상 해결 안 됨)
+-- 게다가 Windows 브라우저는 리눅스 경로를 못 읽으므로 wslpath -w 로 UNC 경로로 바꿔 넘긴다.
+local function windows_browser()
+  return os.getenv("BROWSER") or "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
+end
+
+-- 실제 디스크에 존재하는 파일일 때만 경로를 돌려준다.
+-- NvimTree 같은 특수 버퍼는 "%:p" 가 NvimTree_1 처럼 파일 아닌 이름으로 잡히므로
+-- 빈 문자열 검사만으로는 걸러지지 않는다.
+local function current_real_file()
+  local path = vim.fn.expand("%:p")
+  if path == "" then
+    vim.notify("저장되지 않은 버퍼입니다.", vim.log.levels.WARN)
+    return nil
+  end
+  local stat = vim.uv.fs_stat(path)
+  if not stat or stat.type ~= "file" then
+    vim.notify("파일 버퍼가 아닙니다. HTML 파일을 연 창에서 실행하세요.", vim.log.levels.WARN)
+    return nil
+  end
+  return path
+end
+
+-- 현재 파일을 브라우저로 열기 (file:// — 정적 HTML 용)
+keymap.set("n", "<leader>pb", function()
+  local file = current_real_file()
+  if not file then
+    return
+  end
+  local winpath = vim.trim(vim.fn.system({ "wslpath", "-w", file }))
+  if vim.v.shell_error ~= 0 then
+    vim.notify("wslpath 변환 실패: " .. winpath, vim.log.levels.ERROR)
+    return
+  end
+  vim.system({ windows_browser(), winpath }, { detach = true })
+  vim.notify("브라우저로 열기: " .. vim.fn.expand("%:t"))
+end, { desc = "브라우저로 열기 (file://)" })
+
+-- 로컬 서버로 미리보기
+-- ES module / fetch 를 쓰는 페이지는 file:// 에서 origin 이 null 이라 CORS 로 막힌다.
+-- 서버는 detach 로 떠서 nvim 을 종료해도 남아 있으므로 <leader>pk 로 정리한다.
+local preview_port = 8000
+
+keymap.set("n", "<leader>ps", function()
+  if not current_real_file() then
+    return
+  end
+  local dir, name = vim.fn.expand("%:p:h"), vim.fn.expand("%:t")
+  -- 이전 서버가 다른 디렉터리를 서빙 중이면 엉뚱한 파일이 보이므로 먼저 정리
+  vim.fn.system({ "pkill", "-f", "http.server " .. preview_port })
+  vim.system({ "python3", "-m", "http.server", tostring(preview_port), "--directory", dir }, { detach = true })
+  -- 서버가 포트를 잡기 전에 브라우저가 붙으면 연결 거부되므로 조금 기다린다
+  vim.defer_fn(function()
+    local url = ("http://localhost:%d/%s"):format(preview_port, name)
+    vim.system({ windows_browser(), url }, { detach = true })
+    vim.notify("로컬 서버 미리보기: " .. url)
+  end, 300)
+end, { desc = "로컬 서버로 미리보기" })
+
+-- 미리보기 서버 종료
+keymap.set("n", "<leader>pk", function()
+  vim.fn.system({ "pkill", "-f", "http.server " .. preview_port })
+  vim.notify(("미리보기 서버 종료 (포트 %d)"):format(preview_port))
+end, { desc = "미리보기 서버 종료" })
