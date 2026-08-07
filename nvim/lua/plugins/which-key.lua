@@ -22,6 +22,7 @@ return {
       { "<leader>m", group = "misc (format)" },
       { "<leader>n", group = ".NET (dotnet)" },
       { "<leader>o", group = "outline" },
+      { "<leader>p", group = "preview (browser)" },
       { "<leader>r", group = "refactor/rename" },
       { "<leader>s", group = "split/search" },
       { "<leader>sn", group = "noice messages" },
