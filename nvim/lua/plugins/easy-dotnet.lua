@@ -16,6 +16,9 @@ return {
   },
   config = function()
     require("easy-dotnet").setup({
+      -- C# LSP는 roslyn.nvim이 단독 담당. 이 값을 켜면 Roslyn 서버가 중복 실행된다.
+      lsp = { enabled = false },
+      projx_lsp = { enabled = false },
       managed_terminal = {
         auto_hide = false,
         auto_hide_delay = 5000,
