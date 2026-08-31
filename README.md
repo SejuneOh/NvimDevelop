@@ -343,9 +343,16 @@ live in `nvim/lsp/`.
 > dotnet --list-runtimes | grep 10.0
 > ```
 >
-> `easy-dotnet.nvim` also registers an `easy_dotnet` LSP whose
-> `dotnet-easydotnet` companion binary isn't installed by default — this logs
-> a harmless `not executable` error and is unrelated to completion.
+> **`easy-dotnet.nvim` must not run its own language server.** Its default
+> `lsp.enabled = true` starts a second Roslyn server next to the one
+> `roslyn.nvim` manages. The two compete for inotify instances (128 by default
+> on WSL2), and once the budget runs out one server fails to load any project
+> and its files fall back to a reference-less workspace, so correct `using`
+> directives produce "type or namespace not found" diagnostics. This repo sets
+> `lsp = { enabled = false }` and `projx_lsp = { enabled = false }` in
+> `nvim/lua/plugins/easy-dotnet.lua`; the `Dotnet` commands and test runner
+> still work. Full write-up and the inotify limit fix:
+> [`docs/TROUBLESHOOTING.md`](./docs/TROUBLESHOOTING.md).
 
 ---
 
@@ -512,6 +519,7 @@ config that mirrors `~/.claude/`. Install via [Path 1](#path-1--native-installer
 └── docs/
     ├── DATABASE.md            — vim-dadbod database integration guide
     ├── NVIM_KEYMAPS.md        — full per-plugin keymap reference
+    ├── TROUBLESHOOTING.md     — known failure modes and how to confirm them
     └── ROADMAP.md             — remaining work & installation order
 ```
 
