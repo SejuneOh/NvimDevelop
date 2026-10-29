@@ -215,7 +215,7 @@ Config: [`wezterm/.wezterm.lua`](./wezterm/.wezterm.lua) → installed as
 `~/.wezterm.lua` (or `~/.config/wezterm/wezterm.lua` via the dotfiles script).
 
 - **Font:** D2CodingLigature Nerd Font
-- **Theme:** Catppuccin Mocha (transparent background, opacity 0.92)
+- **Theme:** Github Dark (Gogh) (opacity 0.92)
 - **Tabline plugin** for a cleaner tab bar
 - **Workspace switcher** (zoxide-backed fuzzy finder)
 - **Smart splits** — one keybinding set navigates both WezTerm panes and Neovim splits
@@ -235,11 +235,14 @@ Configs: [`alacritty/macos/alacritty.toml`](./alacritty/macos/alacritty.toml)
 and [`alacritty/windows/alacritty.toml`](./alacritty/windows/alacritty.toml).
 See [`alacritty/README.md`](./alacritty/README.md) for the full breakdown.
 
-- **macOS** — native zsh, Github Dark theme, D2CodingLigature Nerd Font Mono.
-  Ports the WezTerm config (opacity 0.92, `option_as_alt = "Both"`).
+- **macOS** — native zsh, OneDark Warm theme, D2CodingLigature Nerd Font Mono.
+  Ports the WezTerm config (`option_as_alt = "Both"`), fully opaque.
 - **Windows** — launches `wsl.exe -d Ubuntu --cd ~` on startup (terminal on
-  Windows, shell in WSL). Carbonfox theme, opacity 0.95 with blur, 140×40,
+  Windows, shell in WSL). OneDark Warm theme, fully opaque, 140×40,
   10k scrollback.
+
+Both configs use the same OneDark Warm palette as the Neovim colorscheme, so
+the shell and the editor share one background (`#242628`).
 
 Alacritty has no built-in tabs/splits — pair it with **zellij** or **tmux** if
 you want those.
@@ -261,7 +264,7 @@ live in `nvim/lsp/`.
 ### Plugins by category
 
 **UI & navigation**
-- `catppuccin/nvim`, `github-theme.nvim` — color schemes
+- `onedark.nvim` — color scheme (`warm` style, background `#242628`)
 - `nvim-tree.lua` — file explorer
 - `telescope.nvim` + `telescope-fzf-native` — fuzzy finder
 - `which-key.nvim` — keybinding discovery popup
