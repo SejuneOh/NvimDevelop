@@ -54,13 +54,13 @@ hide_when_typing = true
 save_to_clipboard = true
 semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 
-# Carbonfox theme
+# Carbonfox theme (background: onedark warm)
 [colors.primary]
-background = "#161616"
+background = "#2c2d30"
 foreground = "#f2f4f8"
 
 [colors.cursor]
-text = "#161616"
+text = "#2c2d30"
 cursor = "#f2f4f8"
 
 [colors.normal]
