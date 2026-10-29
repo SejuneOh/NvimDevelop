@@ -56,11 +56,11 @@ semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 
 # Carbonfox theme (background: onedark warm)
 [colors.primary]
-background = "#2c2d30"
+background = "#242628"
 foreground = "#f2f4f8"
 
 [colors.cursor]
-text = "#2c2d30"
+text = "#242628"
 cursor = "#f2f4f8"
 
 [colors.normal]
