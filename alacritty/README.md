@@ -31,9 +31,10 @@ Create the `~/.config/alacritty` folder first if it does not exist.
 ### Behavior
 
 - Uses the native login shell (zsh) — no shell override needed on macOS.
-- Ported from the repo's `.wezterm.lua`: opacity `0.92`, zero window padding,
+- Ported from the repo's `.wezterm.lua`: zero window padding,
   `option_as_alt = "Both"` so the Option key acts as Alt for nvim `<A-hjkl>`
   mappings.
+- Fully opaque (`opacity = 1.0`).
 - `live_config_reload` is enabled under `[general]`, so saving the file applies
   changes without restarting Alacritty.
 - Tabs/splits/workspaces are not built into Alacritty — pair it with
@@ -41,7 +42,9 @@ Create the `~/.config/alacritty` folder first if it does not exist.
 
 ### Theme
 
-Github Dark (Gogh) — matches the `.wezterm.lua` `color_scheme`.
+OneDark Warm, same palette as the Windows config. See
+[Theme](#theme-1) under Windows for details. The WezTerm config still uses
+Github Dark (Gogh), so the two terminals no longer share colors.
 
 ### Font
 
@@ -73,8 +76,17 @@ Create the `alacritty` folder first if it does not exist.
 
 ### Theme
 
-Carbonfox — charcoal background (`#161616`) with subtle pink/blue/purple
-accents. Tuned for long coding sessions.
+OneDark Warm, taken from the `warm` palette of
+[`navarasu/onedark.nvim`](https://github.com/navarasu/onedark.nvim) so the
+terminal matches the Neovim colorscheme.
+
+- Background `#242628` (the palette's `bg_d`). Neovim overrides its own `bg0`
+  to the same value, so there is no seam between the shell and the editor.
+- Foreground `#b1b4b9` (the palette's `fg`).
+- The 16 ANSI colors follow onedark.nvim's own terminal mapping
+  (`lua/onedark/terminal.lua`), which reuses the normal colors for the bright
+  variants.
+- Fully opaque (`opacity = 1.0`, no blur).
 
 ### Font
 
