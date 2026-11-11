@@ -8,6 +8,9 @@ require("config.options")
 -- Basic keymaps
 require("config.keymaps")
 
+-- 삭제된 작업 디렉터리 복구 (vim.fs.abspath assert 방지)
+require("config.cwd_guard")
+
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
