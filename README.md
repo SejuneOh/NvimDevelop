@@ -13,7 +13,7 @@ repo, three install paths, the same end state on every machine.
 
 - Two terminals to choose from: **WezTerm** (default, with tabs / panes /
   workspaces) or **Alacritty** (minimal, pair with zellij/tmux for splits).
-- **Neovim 0.10+** with a curated ~40-plugin stack: LSP, Treesitter, Telescope,
+- **Neovim 0.12+** with a curated ~40-plugin stack: LSP, Treesitter, Telescope,
   nvim-cmp, lazygit, DAP, dadbod, Roslyn (.NET), and more.
 - Three ways to install: a **native `.exe` / `.dmg`** double-click installer, a
   **`curl … | bash`** one-liner for WSL/Linux, or the **dotfiles symlink** flow
@@ -69,7 +69,7 @@ have **selectable components**:
 
 | Component  | Selectable | Default | What it does |
 |------------|:----------:|:-------:|--------------|
-| Neovim env | no (core)  | always  | Neovim ≥ 0.10, git, ripgrep, fzf, lazygit, node, the `nvim/` config, and `:Lazy sync` |
+| Neovim env | no (core)  | always  | Neovim ≥ 0.12, git, ripgrep, fzf, lazygit, tree-sitter CLI, node, the `nvim/` config, and `:Lazy sync` |
 | Nerd Font  | yes        | on      | D2CodingLigature Nerd Font |
 | WezTerm    | yes        | on      | WezTerm + `~/.wezterm.lua` |
 | Alacritty  | yes        | off     | Alacritty + its OS-specific config |
@@ -134,11 +134,15 @@ sudo apt update && sudo apt install -y ripgrep curl git fzf
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 nvm install --lts
 
-# Neovim 0.10+ — Ubuntu's apt ships an older version, install from release tarball
+# Neovim 0.12+ — Ubuntu's apt ships an older version, install from release tarball
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
 mkdir -p ~/.local && tar xzf nvim-linux-x86_64.tar.gz -C ~/.local/
 mkdir -p ~/.local/bin && ln -sf ~/.local/nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim
 # Make sure ~/.local/bin is in your PATH
+
+# tree-sitter CLI 0.26.1+ (builds Treesitter parsers; the npm package is not supported)
+curl -fsSL https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-x64.gz | gunzip > ~/.local/bin/tree-sitter
+chmod +x ~/.local/bin/tree-sitter
 ```
 
 **macOS:**
@@ -159,7 +163,7 @@ bash scripts/install.sh --uninstall      # remove symlinks (keeps backups)
 ```
 
 `scripts/install.sh` will:
-1. Verify prerequisites (Neovim ≥ 0.10, git, ripgrep, node, wezterm; warns about optional dotnet, lazygit).
+1. Verify prerequisites (Neovim ≥ 0.12, git, ripgrep, node, wezterm; warns about optional dotnet, lazygit).
 2. Back up any existing configs as `*.backup-<timestamp>`.
 3. Symlink `wezterm/.wezterm.lua` → `~/.config/wezterm/wezterm.lua` and `nvim/` → `~/.config/nvim/`.
 4. Run `nvim --headless +Lazy! sync` to bootstrap plugins.
@@ -193,12 +197,13 @@ export CLAUDE_PR_OUTPUT_DIR="/path/to/PR/output/dir"       # pr-draft skill
 | Tool | Minimum | Purpose |
 |------|---------|---------|
 | WezTerm **or** Alacritty | latest | Terminal emulator |
-| Neovim | 0.10+ | Editor |
+| Neovim | 0.12+ | Editor |
 | Git | any | Plugin installation |
 | Node.js | 18+ | LSP servers |
 | ripgrep | any | Telescope live grep |
 | fzf | any | Workspace switcher / fuzzy find |
 | lazygit | any (optional) | `<leader>gg` git UI |
+| tree-sitter CLI | 0.26.1+ (not npm) | Builds Treesitter parsers (nvim-treesitter `main`) |
 | .NET 10 runtime | optional | Only if you write C# — Roslyn LSP requires it (see [Neovim § C#](#c-roslyn--net-10)) |
 | A Nerd Font | any | Icons (recommended: D2CodingLigature Nerd Font) |
 
