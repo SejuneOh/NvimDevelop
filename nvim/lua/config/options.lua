@@ -38,6 +38,12 @@ opt.splitbelow = true -- 가로 분할 시 아래에 열기
 -- 클립보드
 opt.clipboard = "unnamedplus" -- 시스템 클립보드와 공유 (yank = 복사)
 
+-- WSL: 자동 감지는 PATH 의 /mnt/c 폴더마다 여러 도구를 찾느라 시작이 0.5초 이상 늦어진다.
+-- win32yank.exe 가 있으면 감지를 건너뛰고 바로 쓴다.
+if vim.fn.has("wsl") == 1 and vim.fn.exepath("win32yank.exe") ~= "" then
+  vim.g.clipboard = "win32yank"
+end
+
 -- 파일 저장 관련
 opt.backup = false -- 백업 파일 생성 안 함
 opt.swapfile = false -- 스왑 파일 생성 안 함
