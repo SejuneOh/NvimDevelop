@@ -18,6 +18,7 @@ return {
       { "<leader>e", group = "explorer" },
       { "<leader>f", group = "find" },
       { "<leader>g", group = "git" },
+      { "<leader>G", group = "github (octo)" },
       { "<leader>h", group = "harpoon" },
       { "<leader>m", group = "misc (format)" },
       { "<leader>n", group = ".NET (dotnet)" },
