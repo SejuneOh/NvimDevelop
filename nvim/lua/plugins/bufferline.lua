@@ -32,7 +32,12 @@ return {
 
     -- 번호로 바로 이동 (\5 ~ \9). 1~4는 harpoon 슬롯이 차지
     for i = 5, 9 do
-      keymap("n", "<leader>" .. i, "<cmd>BufferLineGoToBuffer " .. i .. "<cr>", { desc = "버퍼 " .. i .. "로 이동" })
+      keymap(
+        "n",
+        "<leader>" .. i,
+        "<cmd>BufferLineGoToBuffer " .. i .. "<cr>",
+        { desc = "버퍼 " .. i .. "로 이동" }
+      )
     end
   end,
 }

@@ -22,7 +22,7 @@ Components are **selectable** in both installers (checkboxes):
 
 | Component  | Selectable | Default | What it does |
 |------------|:----------:|:-------:|--------------|
-| Neovim env | no (core)  | always  | Neovim ≥ 0.10, git, ripgrep, fzf, lazygit, node, the `nvim/` config, and `:Lazy sync` |
+| Neovim env | no (core)  | always  | Neovim ≥ 0.12, git, ripgrep, fzf, lazygit, tree-sitter CLI, node, the `nvim/` config, and `:Lazy sync` |
 | Nerd Font  | yes        | on      | D2CodingLigature Nerd Font |
 | WezTerm    | yes        | on      | WezTerm + `~/.wezterm.lua` |
 | Alacritty  | yes        | off     | Alacritty + its config |

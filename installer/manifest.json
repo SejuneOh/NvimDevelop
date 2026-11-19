@@ -12,16 +12,17 @@
       "description": "Neovim + CLI tooling + Neovim config + plugin bootstrap. Required by every install.",
       "tools": {
         "neovim": {
-          "minimum_version": "0.10",
+          "minimum_version": "0.12",
           "winget": "Neovim.Neovim",
           "brew": "neovim",
-          "apt": "__manual__ (apt ships <0.10; download release tarball)"
+          "apt": "__manual__ (apt ships <0.12; download release tarball)"
         },
         "git":     { "winget": "Git.Git",                "brew": "git",     "apt": "git" },
         "node":    { "winget": "OpenJS.NodeJS.LTS",      "brew": "node",    "apt": "__nvm__", "purpose": "LSP servers" },
         "ripgrep": { "winget": "BurntSushi.ripgrep.MSVC","brew": "ripgrep", "apt": "ripgrep", "purpose": "Telescope live grep" },
         "fzf":     { "winget": "junegunn.fzf",           "brew": "fzf",     "apt": "fzf",     "purpose": "Workspace switcher / fuzzy find" },
-        "lazygit": { "winget": "JesseDuffield.lazygit",  "brew": "lazygit", "apt": "__release__", "purpose": "<leader>gg git UI" }
+        "lazygit": { "winget": "JesseDuffield.lazygit",  "brew": "lazygit", "apt": "__release__", "purpose": "<leader>gg git UI" },
+        "tree-sitter": { "brew": "tree-sitter-cli", "apt": "__release__", "minimum_version": "0.26.1", "purpose": "Builds Treesitter parsers (nvim-treesitter main)" }
       },
       "config": {
         "source": "nvim",

@@ -99,8 +99,8 @@ install_cli_macos() {
     info "Installing Homebrew..."
     run '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
   }
-  info "Installing CLI tools via brew (git, node, ripgrep, fzf, lazygit, neovim)..."
-  run "brew install git node ripgrep fzf lazygit neovim || true"
+  info "Installing CLI tools via brew (git, node, ripgrep, fzf, lazygit, neovim, tree-sitter-cli)..."
+  run "brew install git node ripgrep fzf lazygit neovim tree-sitter-cli || true"
 }
 
 install_neovim_linux() {
@@ -109,8 +109,8 @@ install_neovim_linux() {
     local maj min; IFS='.' read -r maj min _ <<EOF
 $v
 EOF
-    if [ "${maj:-0}" -gt 0 ] || [ "${min:-0}" -ge 10 ]; then
-      info "Neovim $v already present (>= 0.10), skipping."
+    if [ "${maj:-0}" -gt 0 ] || [ "${min:-0}" -ge 12 ]; then
+      info "Neovim $v already present (>= 0.12), skipping."
       return
     fi
     warn "Neovim $v is too old; installing a current release into ~/.local."
@@ -156,6 +156,22 @@ install_lazygit_linux() {
   run "install /tmp/lazygit '$HOME/.local/bin/lazygit'"
 }
 
+# nvim-treesitter (main) builds parsers with tree-sitter CLI 0.26.1+; the npm package is not supported.
+install_tree_sitter_linux() {
+  command -v tree-sitter >/dev/null 2>&1 && return
+  info "Installing tree-sitter CLI into ~/.local/bin..."
+  local asset
+  case "$ARCH" in
+    x86_64|amd64) asset="tree-sitter-linux-x64.gz" ;;
+    aarch64|arm64) asset="tree-sitter-linux-arm64.gz" ;;
+    *) warn "unsupported arch for tree-sitter CLI: $ARCH"; return ;;
+  esac
+  run "mkdir -p '$HOME/.local/bin'"
+  run "curl -fsSL -o /tmp/tree-sitter.gz 'https://github.com/tree-sitter/tree-sitter/releases/latest/download/${asset}'"
+  run "gunzip -f /tmp/tree-sitter.gz"
+  run "install /tmp/tree-sitter '$HOME/.local/bin/tree-sitter'"
+}
+
 install_cli_linux() {
   if command -v apt-get >/dev/null 2>&1; then
     info "Installing CLI tools via apt (git, ripgrep, fzf, curl)..."
@@ -167,6 +183,7 @@ install_cli_linux() {
   install_neovim_linux
   install_node_linux
   install_lazygit_linux
+  install_tree_sitter_linux
 }
 
 # ----------------------------------------------------------------------------

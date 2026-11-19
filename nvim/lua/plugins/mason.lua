@@ -47,7 +47,6 @@ return {
         -- formatters
         "stylua", -- Lua
         "prettier", -- JS / TS / HTML / CSS / JSON / MD
-        "csharpier", -- C#
         "black", -- Python
         "isort", -- Python
         -- linters

@@ -15,7 +15,7 @@ return {
     },
     checkbox = {
       unchecked = { icon = "󰄱 " },
-      checked   = { icon = "󰱒 " },
+      checked = { icon = "󰱒 " },
     },
   },
   keys = {

@@ -5,8 +5,8 @@ live_config_reload = true
 TERM = "xterm-256color"
 
 [window]
-opacity = 0.95
-blur = true
+opacity = 1.0
+blur = false
 decorations = "Full"
 startup_mode = "Windowed"
 dynamic_title = true
@@ -54,38 +54,38 @@ hide_when_typing = true
 save_to_clipboard = true
 semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
 
-# Carbonfox theme
+# OneDark Warm theme (navarasu/onedark.nvim, background: bg_d)
 [colors.primary]
-background = "#161616"
-foreground = "#f2f4f8"
+background = "#242628"
+foreground = "#b1b4b9"
 
 [colors.cursor]
-text = "#161616"
-cursor = "#f2f4f8"
+text = "#242628"
+cursor = "#b1b4b9"
 
 [colors.normal]
-black   = "#282828"
-red     = "#ee5396"
-green   = "#25be6a"
-yellow  = "#08bdba"
-blue    = "#78a9ff"
-magenta = "#be95ff"
-cyan    = "#33b1ff"
-white   = "#dde1e6"
+black   = "#191a1c"
+red     = "#e16d77"
+green   = "#99bc80"
+yellow  = "#dfbe81"
+blue    = "#68aee8"
+magenta = "#c27fd7"
+cyan    = "#5fafb9"
+white   = "#b1b4b9"
 
 [colors.bright]
-black   = "#484848"
-red     = "#f16da6"
-green   = "#46c880"
-yellow  = "#2dc7c4"
-blue    = "#8cb6ff"
-magenta = "#c8a5ff"
-cyan    = "#52bdff"
-white   = "#f2f4f8"
+black   = "#646568"
+red     = "#e16d77"
+green   = "#99bc80"
+yellow  = "#dfbe81"
+blue    = "#68aee8"
+magenta = "#c27fd7"
+cyan    = "#5fafb9"
+white   = "#b1b4b9"
 
 [colors.selection]
-text = "#f2f4f8"
-background = "#2a4a6d"
+text = "CellForeground"
+background = "#3e4045"
 
 [[keyboard.bindings]]
 key = "V"

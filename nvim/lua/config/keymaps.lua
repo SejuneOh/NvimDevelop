@@ -56,8 +56,12 @@ local function smart_bdelete(force)
   end
 end
 
-keymap.set("n", "<leader>bd", function() smart_bdelete(false) end, { desc = "버퍼 닫기 (창 유지)" })
-keymap.set("n", "<leader>bD", function() smart_bdelete(true) end, { desc = "버퍼 강제 닫기" })
+keymap.set("n", "<leader>bd", function()
+  smart_bdelete(false)
+end, { desc = "버퍼 닫기 (창 유지)" })
+keymap.set("n", "<leader>bD", function()
+  smart_bdelete(true)
+end, { desc = "버퍼 강제 닫기" })
 keymap.set("n", "<leader>bo", "<cmd>BufferLineCloseOthers<CR>", { desc = "다른 버퍼 모두 닫기" })
 keymap.set("n", "<leader>bl", "<cmd>BufferLineCloseLeft<CR>", { desc = "왼쪽 버퍼 모두 닫기" })
 keymap.set("n", "<leader>br", "<cmd>BufferLineCloseRight<CR>", { desc = "오른쪽 버퍼 모두 닫기" })

@@ -14,14 +14,22 @@ return {
       require("nvim-dap-virtual-text").setup()
 
       -- UI 자동 토글
-      dap.listeners.before.attach.dapui_config = function() dapui.open() end
-      dap.listeners.before.launch.dapui_config = function() dapui.open() end
-      dap.listeners.before.event_terminated.dapui_config = function() dapui.close() end
-      dap.listeners.before.event_exited.dapui_config = function() dapui.close() end
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
+      end
 
       -- 사인 아이콘
       vim.fn.sign_define("DapBreakpoint", { text = "●", texthl = "DiagnosticError" })
-      vim.fn.sign_define("DapStopped",    { text = "▶", texthl = "DiagnosticWarn" })
+      vim.fn.sign_define("DapStopped", { text = "▶", texthl = "DiagnosticWarn" })
 
       ----------------------------------------------------------------------
       -- C# (coreclr) 어댑터
@@ -124,19 +132,22 @@ return {
       -- 키맵
       ----------------------------------------------------------------------
       local map = vim.keymap.set
-      map("n", "<leader>db", dap.toggle_breakpoint,                              { desc = "DAP: 브레이크포인트" })
-      map("n", "<leader>dB", function() dap.set_breakpoint(vim.fn.input("조건: ")) end,
-        { desc = "DAP: 조건 브레이크포인트" })
-      map("n", "<leader>dc", dap.continue,                                      { desc = "DAP: 시작/계속" })
-      map("n", "<leader>do", dap.step_over,                                     { desc = "DAP: Step Over" })
-      map("n", "<leader>di", dap.step_into,                                     { desc = "DAP: Step Into" })
-      map("n", "<leader>dO", dap.step_out,                                      { desc = "DAP: Step Out" })
-      map("n", "<leader>dr", dap.repl.toggle,                                   { desc = "DAP: REPL" })
-      map("n", "<leader>dl", dap.run_last,                                      { desc = "DAP: 마지막 재실행" })
-      map("n", "<leader>dt", dap.terminate,                                     { desc = "DAP: 종료" })
-      map("n", "<leader>du", dapui.toggle,                                      { desc = "DAP: UI 토글" })
-      map({ "n", "v" }, "<leader>de", function() require("dapui").eval() end,   { desc = "DAP: 변수 평가" })
-      map("n", "<leader>dL", "<cmd>DapLoadLaunchJSON<CR>",                      { desc = "DAP: launch.json 재로드" })
+      map("n", "<leader>db", dap.toggle_breakpoint, { desc = "DAP: 브레이크포인트" })
+      map("n", "<leader>dB", function()
+        dap.set_breakpoint(vim.fn.input("조건: "))
+      end, { desc = "DAP: 조건 브레이크포인트" })
+      map("n", "<leader>dc", dap.continue, { desc = "DAP: 시작/계속" })
+      map("n", "<leader>do", dap.step_over, { desc = "DAP: Step Over" })
+      map("n", "<leader>di", dap.step_into, { desc = "DAP: Step Into" })
+      map("n", "<leader>dO", dap.step_out, { desc = "DAP: Step Out" })
+      map("n", "<leader>dr", dap.repl.toggle, { desc = "DAP: REPL" })
+      map("n", "<leader>dl", dap.run_last, { desc = "DAP: 마지막 재실행" })
+      map("n", "<leader>dt", dap.terminate, { desc = "DAP: 종료" })
+      map("n", "<leader>du", dapui.toggle, { desc = "DAP: UI 토글" })
+      map({ "n", "v" }, "<leader>de", function()
+        require("dapui").eval()
+      end, { desc = "DAP: 변수 평가" })
+      map("n", "<leader>dL", "<cmd>DapLoadLaunchJSON<CR>", { desc = "DAP: launch.json 재로드" })
     end,
   },
 }

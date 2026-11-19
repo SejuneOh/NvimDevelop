@@ -51,6 +51,17 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash __HOME__/.claude/hooks/readable-inject.sh 2>/dev/null || true",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   },
   "skipDangerousModePermissionPrompt": true,

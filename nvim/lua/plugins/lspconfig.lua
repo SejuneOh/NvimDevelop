@@ -66,8 +66,20 @@ return {
         map_if("textDocument/references", "n", "gR", "<cmd>Telescope lsp_references<CR>", "LSP: 참조 보기")
         map_if("textDocument/definition", "n", "gd", "<cmd>Telescope lsp_definitions<CR>", "LSP: 정의로 이동")
         map_if("textDocument/declaration", "n", "gD", vim.lsp.buf.declaration, "LSP: 선언으로 이동")
-        map_if("textDocument/implementation", "n", "gi", "<cmd>Telescope lsp_implementations<CR>", "LSP: 구현으로 이동")
-        map_if("textDocument/typeDefinition", "n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", "LSP: 타입 정의로 이동")
+        map_if(
+          "textDocument/implementation",
+          "n",
+          "gi",
+          "<cmd>Telescope lsp_implementations<CR>",
+          "LSP: 구현으로 이동"
+        )
+        map_if(
+          "textDocument/typeDefinition",
+          "n",
+          "gt",
+          "<cmd>Telescope lsp_type_definitions<CR>",
+          "LSP: 타입 정의로 이동"
+        )
         map_if("textDocument/codeAction", { "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "LSP: 코드 액션")
         map_if("textDocument/rename", "n", "<leader>rn", vim.lsp.buf.rename, "LSP: 이름 변경")
         map_if("textDocument/hover", "n", "K", vim.lsp.buf.hover, "LSP: 호버 문서")

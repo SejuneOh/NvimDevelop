@@ -6,13 +6,13 @@ return {
   },
   cmd = { "Dotnet", "DotnetRunProfile" },
   keys = {
-    { "<leader>nr", "<cmd>DotnetRunProfile<CR>",  desc = ".NET: 실행 (프로필 선택)" },
+    { "<leader>nr", "<cmd>DotnetRunProfile<CR>", desc = ".NET: 실행 (프로필 선택)" },
     { "<leader>nt", "<cmd>Dotnet testrunner<CR>", desc = ".NET: 테스트 러너" },
-    { "<leader>nb", "<cmd>Dotnet build<CR>",      desc = ".NET: 빌드" },
-    { "<leader>nR", "<cmd>Dotnet restore<CR>",    desc = ".NET: restore" },
-    { "<leader>nc", "<cmd>Dotnet clean<CR>",      desc = ".NET: clean" },
-    { "<leader>ns", "<cmd>Dotnet secrets<CR>",    desc = ".NET: user secrets" },
-    { "<leader>nn", "<cmd>Dotnet new<CR>",        desc = ".NET: 새 프로젝트" },
+    { "<leader>nb", "<cmd>Dotnet build<CR>", desc = ".NET: 빌드" },
+    { "<leader>nR", "<cmd>Dotnet restore<CR>", desc = ".NET: restore" },
+    { "<leader>nc", "<cmd>Dotnet clean<CR>", desc = ".NET: clean" },
+    { "<leader>ns", "<cmd>Dotnet secrets<CR>", desc = ".NET: user secrets" },
+    { "<leader>nn", "<cmd>Dotnet new<CR>", desc = ".NET: 새 프로젝트" },
   },
   config = function()
     require("easy-dotnet").setup({
@@ -43,10 +43,18 @@ return {
       terminal = function(path, action, args)
         args = args or "" -- nil 보호: string.format이 "nil" 문자열을 셸에 삽입하는 것 방지
         local commands = {
-          run     = function() return string.format("dotnet run --project %s %s", path, args) end,
-          test    = function() return string.format("dotnet test %s %s", path, args) end,
-          restore = function() return string.format("dotnet restore %s %s", path, args) end,
-          build   = function() return string.format("dotnet build %s %s", path, args) end,
+          run = function()
+            return string.format("dotnet run --project %s %s", path, args)
+          end,
+          test = function()
+            return string.format("dotnet test %s %s", path, args)
+          end,
+          restore = function()
+            return string.format("dotnet restore %s %s", path, args)
+          end,
+          build = function()
+            return string.format("dotnet build %s %s", path, args)
+          end,
         }
         local command = commands[action]() .. "\r"
         vim.cmd("botright split | term " .. command)
@@ -115,7 +123,9 @@ return {
             return vim.fn.fnamemodify(item, ":h:h:t") -- 프로젝트 폴더명만
           end,
         }, function(choice)
-          if not choice then return end
+          if not choice then
+            return
+          end
           pick_profile(choice)
         end)
       end

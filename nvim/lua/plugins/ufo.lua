@@ -23,10 +23,40 @@ return {
     },
   },
   keys = {
-    { "zR", function() require("ufo").openAllFolds()  end, desc = "Fold: 모두 펼치기" },
-    { "zM", function() require("ufo").closeAllFolds() end, desc = "Fold: 모두 접기" },
-    { "zr", function() require("ufo").openFoldsExceptKinds() end, desc = "Fold: 한 단계 펼치기" },
-    { "zm", function() require("ufo").closeFoldsWith() end, desc = "Fold: 한 단계 접기" },
-    { "zp", function() require("ufo").peekFoldedLinesUnderCursor() end, desc = "Fold: 미리보기" },
+    {
+      "zR",
+      function()
+        require("ufo").openAllFolds()
+      end,
+      desc = "Fold: 모두 펼치기",
+    },
+    {
+      "zM",
+      function()
+        require("ufo").closeAllFolds()
+      end,
+      desc = "Fold: 모두 접기",
+    },
+    {
+      "zr",
+      function()
+        require("ufo").openFoldsExceptKinds()
+      end,
+      desc = "Fold: 한 단계 펼치기",
+    },
+    {
+      "zm",
+      function()
+        require("ufo").closeFoldsWith()
+      end,
+      desc = "Fold: 한 단계 접기",
+    },
+    {
+      "zp",
+      function()
+        require("ufo").peekFoldedLinesUnderCursor()
+      end,
+      desc = "Fold: 미리보기",
+    },
   },
 }

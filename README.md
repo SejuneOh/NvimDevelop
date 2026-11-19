@@ -13,7 +13,7 @@ repo, three install paths, the same end state on every machine.
 
 - Two terminals to choose from: **WezTerm** (default, with tabs / panes /
   workspaces) or **Alacritty** (minimal, pair with zellij/tmux for splits).
-- **Neovim 0.10+** with a curated ~40-plugin stack: LSP, Treesitter, Telescope,
+- **Neovim 0.12+** with a curated ~40-plugin stack: LSP, Treesitter, Telescope,
   nvim-cmp, lazygit, DAP, dadbod, Roslyn (.NET), and more.
 - Three ways to install: a **native `.exe` / `.dmg`** double-click installer, a
   **`curl … | bash`** one-liner for WSL/Linux, or the **dotfiles symlink** flow
@@ -69,7 +69,7 @@ have **selectable components**:
 
 | Component  | Selectable | Default | What it does |
 |------------|:----------:|:-------:|--------------|
-| Neovim env | no (core)  | always  | Neovim ≥ 0.10, git, ripgrep, fzf, lazygit, node, the `nvim/` config, and `:Lazy sync` |
+| Neovim env | no (core)  | always  | Neovim ≥ 0.12, git, ripgrep, fzf, lazygit, tree-sitter CLI, node, the `nvim/` config, and `:Lazy sync` |
 | Nerd Font  | yes        | on      | D2CodingLigature Nerd Font |
 | WezTerm    | yes        | on      | WezTerm + `~/.wezterm.lua` |
 | Alacritty  | yes        | off     | Alacritty + its OS-specific config |
@@ -134,11 +134,15 @@ sudo apt update && sudo apt install -y ripgrep curl git fzf
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 nvm install --lts
 
-# Neovim 0.10+ — Ubuntu's apt ships an older version, install from release tarball
+# Neovim 0.12+ — Ubuntu's apt ships an older version, install from release tarball
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
 mkdir -p ~/.local && tar xzf nvim-linux-x86_64.tar.gz -C ~/.local/
 mkdir -p ~/.local/bin && ln -sf ~/.local/nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim
 # Make sure ~/.local/bin is in your PATH
+
+# tree-sitter CLI 0.26.1+ (builds Treesitter parsers; the npm package is not supported)
+curl -fsSL https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-x64.gz | gunzip > ~/.local/bin/tree-sitter
+chmod +x ~/.local/bin/tree-sitter
 ```
 
 **macOS:**
@@ -159,7 +163,7 @@ bash scripts/install.sh --uninstall      # remove symlinks (keeps backups)
 ```
 
 `scripts/install.sh` will:
-1. Verify prerequisites (Neovim ≥ 0.10, git, ripgrep, node, wezterm; warns about optional dotnet, lazygit).
+1. Verify prerequisites (Neovim ≥ 0.12, git, ripgrep, node, wezterm; warns about optional dotnet, lazygit).
 2. Back up any existing configs as `*.backup-<timestamp>`.
 3. Symlink `wezterm/.wezterm.lua` → `~/.config/wezterm/wezterm.lua` and `nvim/` → `~/.config/nvim/`.
 4. Run `nvim --headless +Lazy! sync` to bootstrap plugins.
@@ -193,12 +197,13 @@ export CLAUDE_PR_OUTPUT_DIR="/path/to/PR/output/dir"       # pr-draft skill
 | Tool | Minimum | Purpose |
 |------|---------|---------|
 | WezTerm **or** Alacritty | latest | Terminal emulator |
-| Neovim | 0.10+ | Editor |
+| Neovim | 0.12+ | Editor |
 | Git | any | Plugin installation |
 | Node.js | 18+ | LSP servers |
 | ripgrep | any | Telescope live grep |
 | fzf | any | Workspace switcher / fuzzy find |
 | lazygit | any (optional) | `<leader>gg` git UI |
+| tree-sitter CLI | 0.26.1+ (not npm) | Builds Treesitter parsers (nvim-treesitter `main`) |
 | .NET 10 runtime | optional | Only if you write C# — Roslyn LSP requires it (see [Neovim § C#](#c-roslyn--net-10)) |
 | A Nerd Font | any | Icons (recommended: D2CodingLigature Nerd Font) |
 
@@ -215,7 +220,7 @@ Config: [`wezterm/.wezterm.lua`](./wezterm/.wezterm.lua) → installed as
 `~/.wezterm.lua` (or `~/.config/wezterm/wezterm.lua` via the dotfiles script).
 
 - **Font:** D2CodingLigature Nerd Font
-- **Theme:** Catppuccin Mocha (transparent background, opacity 0.92)
+- **Theme:** Github Dark (Gogh) (opacity 0.92)
 - **Tabline plugin** for a cleaner tab bar
 - **Workspace switcher** (zoxide-backed fuzzy finder)
 - **Smart splits** — one keybinding set navigates both WezTerm panes and Neovim splits
@@ -235,11 +240,14 @@ Configs: [`alacritty/macos/alacritty.toml`](./alacritty/macos/alacritty.toml)
 and [`alacritty/windows/alacritty.toml`](./alacritty/windows/alacritty.toml).
 See [`alacritty/README.md`](./alacritty/README.md) for the full breakdown.
 
-- **macOS** — native zsh, Github Dark theme, D2CodingLigature Nerd Font Mono.
-  Ports the WezTerm config (opacity 0.92, `option_as_alt = "Both"`).
+- **macOS** — native zsh, OneDark Warm theme, D2CodingLigature Nerd Font Mono.
+  Ports the WezTerm config (`option_as_alt = "Both"`), fully opaque.
 - **Windows** — launches `wsl.exe -d Ubuntu --cd ~` on startup (terminal on
-  Windows, shell in WSL). Carbonfox theme, opacity 0.95 with blur, 140×40,
+  Windows, shell in WSL). OneDark Warm theme, fully opaque, 140×40,
   10k scrollback.
+
+Both configs use the same OneDark Warm palette as the Neovim colorscheme, so
+the shell and the editor share one background (`#242628`).
 
 Alacritty has no built-in tabs/splits — pair it with **zellij** or **tmux** if
 you want those.
@@ -261,7 +269,7 @@ live in `nvim/lsp/`.
 ### Plugins by category
 
 **UI & navigation**
-- `catppuccin/nvim`, `github-theme.nvim` — color schemes
+- `onedark.nvim` — color scheme (`warm` style, background `#242628`)
 - `nvim-tree.lua` — file explorer
 - `telescope.nvim` + `telescope-fzf-native` — fuzzy finder
 - `which-key.nvim` — keybinding discovery popup
@@ -371,9 +379,11 @@ config that mirrors `~/.claude/`. Install via [Path 1](#path-1--native-installer
 | `agents/dotnet-api-developer.md` | Custom subagent for ASP.NET Core API work |
 | `hooks/session-start.sh` | Prints git context at session start; optionally shows an Obsidian project note |
 | `hooks/notify-windows.sh` | Windows balloon notification on Claude notifications (WSL only) |
+| `hooks/readable-inject.sh` | Injects the `readable` skill rules into every prompt (requires `jq`) |
 | `skills/obsidian/` | Vault note manager (`/obsidian --project`, `--inbox`, `--decision`, etc.) |
 | `skills/pr-draft/` | PR body draft generator from current branch |
 | `skills/project-launcher/` | Dispatch background Claude sessions to registered projects |
+| `skills/readable/` | Plain-language explanation rules (`/readable`), applied to every answer by the hook above |
 
 > `notify-windows.sh` is WSL-specific (uses `powershell.exe`). On non-WSL
 > macOS/Linux, either replace it with a platform-appropriate notifier or
@@ -505,7 +515,7 @@ config that mirrors `~/.claude/`. Install via [Path 1](#path-1--native-installer
 │   ├── usage-fetch.py
 │   ├── agents/
 │   ├── hooks/
-│   └── skills/{obsidian,pr-draft,project-launcher}/
+│   └── skills/{obsidian,pr-draft,project-launcher,readable}/
 ├── scripts/
 │   ├── install.sh             — dotfiles-symlink installer (Path 3)
 │   └── install-claude.sh      — symlink claude/ into ~/.claude/

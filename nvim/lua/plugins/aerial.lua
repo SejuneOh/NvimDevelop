@@ -25,10 +25,8 @@ return {
       whitespace = "  ",
     },
     on_attach = function(bufnr)
-      vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>",
-        { buffer = bufnr, desc = "이전 심볼" })
-      vim.keymap.set("n", "}", "<cmd>AerialNext<CR>",
-        { buffer = bufnr, desc = "다음 심볼" })
+      vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>", { buffer = bufnr, desc = "이전 심볼" })
+      vim.keymap.set("n", "}", "<cmd>AerialNext<CR>", { buffer = bufnr, desc = "다음 심볼" })
     end,
   },
   keys = {

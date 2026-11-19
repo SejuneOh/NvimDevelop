@@ -6,12 +6,12 @@ return {
 
     gitsigns.setup({
       signs = {
-        add          = { text = "┃" },
-        change       = { text = "┃" },
-        delete       = { text = "_" },
-        topdelete    = { text = "‾" },
+        add = { text = "┃" },
+        change = { text = "┃" },
+        delete = { text = "_" },
+        topdelete = { text = "‾" },
         changedelete = { text = "~" },
-        untracked    = { text = "┆" },
+        untracked = { text = "┆" },
       },
       on_attach = function(bufnr)
         local map = function(mode, lhs, rhs, desc)

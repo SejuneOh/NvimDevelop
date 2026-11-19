@@ -1,0 +1,4 @@
+# 저장 시 stylua가 기본값(탭)으로 재작성하지 않도록 공백 2칸으로 고정한다.
+# lua/config/options.lua 의 전역 들여쓰기 설정과 같은 값이다.
+indent_type = "Spaces"
+indent_width = 2

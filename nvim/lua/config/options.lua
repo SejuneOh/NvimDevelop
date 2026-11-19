@@ -11,6 +11,10 @@ opt.expandtab = true -- Tab을 공백으로 변환
 opt.autoindent = true -- 이전 줄의 들여쓰기 유지
 opt.smartindent = true -- 구문에 따라 지능적으로 들여쓰기
 
+-- markdown은 nvim 런타임 ftplugin이 4칸으로 덮어쓴다. 위 2칸 설정을 유지하기 위해 끈다.
+-- (사용자 ftplugin/markdown.lua로는 안 된다 - 런타임 ftplugin이 나중에 실행된다)
+vim.g.markdown_recommended_style = 0
+
 -- 줄바꿈
 opt.wrap = false -- 긴 줄을 자동으로 줄바꿈하지 않음
 
@@ -33,6 +37,12 @@ opt.splitbelow = true -- 가로 분할 시 아래에 열기
 
 -- 클립보드
 opt.clipboard = "unnamedplus" -- 시스템 클립보드와 공유 (yank = 복사)
+
+-- WSL: 자동 감지는 PATH 의 /mnt/c 폴더마다 여러 도구를 찾느라 시작이 0.5초 이상 늦어진다.
+-- win32yank.exe 가 있으면 감지를 건너뛰고 바로 쓴다.
+if vim.fn.has("wsl") == 1 and vim.fn.exepath("win32yank.exe") ~= "" then
+  vim.g.clipboard = "win32yank"
+end
 
 -- 파일 저장 관련
 opt.backup = false -- 백업 파일 생성 안 함

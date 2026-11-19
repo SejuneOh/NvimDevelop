@@ -5,9 +5,9 @@ return {
   version = "*",
   cmd = { "ToggleTerm", "TermExec" },
   keys = {
-    { "<leader>Tt", "<cmd>ToggleTerm direction=float<CR>",                desc = "Terminal: 플로팅" },
-    { "<leader>Th", "<cmd>ToggleTerm direction=horizontal size=15<CR>",   desc = "Terminal: 가로 분할" },
-    { "<leader>Tv", "<cmd>ToggleTerm direction=vertical size=80<CR>",     desc = "Terminal: 세로 분할" },
+    { "<leader>Tt", "<cmd>ToggleTerm direction=float<CR>", desc = "Terminal: 플로팅" },
+    { "<leader>Th", "<cmd>ToggleTerm direction=horizontal size=15<CR>", desc = "Terminal: 가로 분할" },
+    { "<leader>Tv", "<cmd>ToggleTerm direction=vertical size=80<CR>", desc = "Terminal: 세로 분할" },
   },
   opts = {
     open_mapping = false,
@@ -22,7 +22,7 @@ return {
       winblend = 0,
     },
     highlights = {
-      Normal      = { link = "Normal" },
+      Normal = { link = "Normal" },
       NormalFloat = { link = "NormalFloat" },
       FloatBorder = { link = "FloatBorder" },
     },
