@@ -110,23 +110,12 @@ return {
       }
 
       ----------------------------------------------------------------------
-      -- .vscode/launch.json 자동 로드 (있을 때)
+      -- .vscode/launch.json: 디버깅을 시작할 때마다 nvim-dap 이 직접 읽는다 (:h dap-providers)
       ----------------------------------------------------------------------
-      local vscode = require("dap.ext.vscode")
-      local launch_json = vim.fn.getcwd() .. "/.vscode/launch.json"
-      if vim.fn.filereadable(launch_json) == 1 then
-        vscode.load_launchjs(launch_json, {
-          coreclr = { "cs", "fsharp", "vb" },
-        })
+      -- VS Code 는 launch.json 을 JSONC 로 읽어 배열·객체 끝의 쉼표를 허용한다. 주석은 nvim-dap 이 건너뛴다.
+      require("dap.ext.vscode").json_decode = function(str, opts)
+        return vim.json.decode(str:gsub(",(%s*[%]}])", "%1"), opts)
       end
-
-      -- 명령어: 언제든 launch.json 다시 로드
-      vim.api.nvim_create_user_command("DapLoadLaunchJSON", function()
-        require("dap.ext.vscode").load_launchjs(nil, {
-          coreclr = { "cs", "fsharp", "vb" },
-        })
-        vim.notify("launch.json 다시 로드됨", vim.log.levels.INFO)
-      end, {})
 
       ----------------------------------------------------------------------
       -- 키맵
@@ -147,7 +136,6 @@ return {
       map({ "n", "v" }, "<leader>de", function()
         require("dapui").eval()
       end, { desc = "DAP: 변수 평가" })
-      map("n", "<leader>dL", "<cmd>DapLoadLaunchJSON<CR>", { desc = "DAP: launch.json 재로드" })
     end,
   },
 }
