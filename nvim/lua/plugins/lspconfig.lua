@@ -2,7 +2,7 @@ return {
   "neovim/nvim-lspconfig",
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
-    "hrsh7th/cmp-nvim-lsp",
+    "saghen/blink.cmp",
   },
   config = function()
     -- 진단(Diagnostic) 설정: 사인 컬럼 아이콘 + 플로팅 창
@@ -23,7 +23,7 @@ return {
 
     -- 모든 LSP에 공통 적용되는 기본 설정 (capabilities)
     vim.lsp.config("*", {
-      capabilities = require("cmp_nvim_lsp").default_capabilities(),
+      capabilities = require("blink.cmp").get_lsp_capabilities(),
     })
 
     -- LSP 서버 활성화
