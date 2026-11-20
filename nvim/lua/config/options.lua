@@ -30,6 +30,8 @@ opt.termguicolors = true -- 24-bit 컬러 지원 (테마 색상 제대로 표시
 opt.signcolumn = "yes" -- LSP/git 표시용 왼쪽 여백 항상 표시 (흔들림 방지)
 opt.scrolloff = 8 -- 커서 위아래로 최소 8줄 여백 유지
 opt.sidescrolloff = 8 -- 커서 좌우로 최소 8칸 여백 유지
+opt.winborder = "rounded" -- 떠 있는 창(진단·호버·자동완성 등) 테두리를 한 모양으로 맞춘다
+opt.fillchars = { eob = " " } -- 파일 끝 아래 빈 줄의 ~ 표시를 숨긴다
 
 -- 분할
 opt.splitright = true -- 세로 분할 시 오른쪽에 열기
