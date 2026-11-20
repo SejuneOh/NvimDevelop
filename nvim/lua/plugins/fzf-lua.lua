@@ -3,7 +3,18 @@ return {
   "ibhagwan/fzf-lua",
   dependencies = { "nvim-tree/nvim-web-devicons" },
   cmd = "FzfLua",
+  init = function()
+    -- 코드 액션 등 vim.ui.select 가 처음 불릴 때 fzf-lua 를 불러온다. setup 의 ui_select 가 이 함수를 교체한다.
+    local builtin_select = vim.ui.select
+    local function lazy_select(...)
+      require("lazy").load({ plugins = { "fzf-lua" } })
+      local select = vim.ui.select ~= lazy_select and vim.ui.select or builtin_select
+      return select(...)
+    end
+    vim.ui.select = lazy_select
+  end,
   opts = {
+    ui_select = {}, -- vim.ui.select 를 fzf-lua 목록 창으로 띄운다
     winopts = {
       height = 0.85,
       width = 0.85,
