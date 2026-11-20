@@ -19,6 +19,7 @@ return {
       { "<leader>f", group = "find" },
       { "<leader>g", group = "git" },
       { "<leader>G", group = "github (octo)" },
+      { "<leader>a", group = "AI (Claude Code)" },
       { "<leader>h", group = "harpoon" },
       { "<leader>m", group = "misc (format)" },
       { "<leader>n", group = ".NET (dotnet)" },
