@@ -2,7 +2,7 @@ return {
   "neovim/nvim-lspconfig",
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
-    "hrsh7th/cmp-nvim-lsp",
+    "saghen/blink.cmp",
   },
   config = function()
     -- 진단(Diagnostic) 설정: 사인 컬럼 아이콘 + 플로팅 창
@@ -23,7 +23,7 @@ return {
 
     -- 모든 LSP에 공통 적용되는 기본 설정 (capabilities)
     vim.lsp.config("*", {
-      capabilities = require("cmp_nvim_lsp").default_capabilities(),
+      capabilities = require("blink.cmp").get_lsp_capabilities(),
     })
 
     -- LSP 서버 활성화
@@ -63,21 +63,21 @@ return {
         end
 
         -- LSP 메서드 기반 키맵 (capability 체크)
-        map_if("textDocument/references", "n", "gR", "<cmd>Telescope lsp_references<CR>", "LSP: 참조 보기")
-        map_if("textDocument/definition", "n", "gd", "<cmd>Telescope lsp_definitions<CR>", "LSP: 정의로 이동")
+        map_if("textDocument/references", "n", "gR", "<cmd>FzfLua lsp_references<CR>", "LSP: 참조 보기")
+        map_if("textDocument/definition", "n", "gd", "<cmd>FzfLua lsp_definitions<CR>", "LSP: 정의로 이동")
         map_if("textDocument/declaration", "n", "gD", vim.lsp.buf.declaration, "LSP: 선언으로 이동")
         map_if(
           "textDocument/implementation",
           "n",
           "gi",
-          "<cmd>Telescope lsp_implementations<CR>",
+          "<cmd>FzfLua lsp_implementations<CR>",
           "LSP: 구현으로 이동"
         )
         map_if(
           "textDocument/typeDefinition",
           "n",
           "gt",
-          "<cmd>Telescope lsp_type_definitions<CR>",
+          "<cmd>FzfLua lsp_typedefs<CR>",
           "LSP: 타입 정의로 이동"
         )
         map_if("textDocument/codeAction", { "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "LSP: 코드 액션")
@@ -87,7 +87,7 @@ return {
         -- 진단(Diagnostic) 키맵: LSP 메서드와 무관, 항상 등록
         -- 단독 <leader>d/<leader>D는 DAP/dadbod prefix와 충돌하므로 다른 키로 이동
         opts.desc = "LSP: 버퍼 진단 목록"
-        keymap("n", "<leader>xD", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
+        keymap("n", "<leader>xD", "<cmd>FzfLua diagnostics_document<CR>", opts)
 
         opts.desc = "LSP: 현재 줄 진단 표시"
         keymap("n", "<leader>k", vim.diagnostic.open_float, opts)

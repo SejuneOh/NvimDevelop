@@ -31,11 +31,11 @@ return {
   cmd = "Octo",
   dependencies = {
     "nvim-lua/plenary.nvim",
-    "nvim-telescope/telescope.nvim",
+    "ibhagwan/fzf-lua",
     "nvim-tree/nvim-web-devicons",
   },
   opts = {
-    picker = "telescope",
+    picker = "fzf-lua",
     enable_builtin = true, -- 인자 없이 :Octo 를 실행하면 명령 목록을 띄움
     default_to_projects_v2 = true,
     ssh_aliases = { [PERSONAL_SSH_HOST] = "github.com" },

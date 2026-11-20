@@ -13,6 +13,6 @@ return {
     keymap("n", "[t", function()
       require("todo-comments").jump_prev()
     end, { desc = "이전 TODO" })
-    keymap("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "TODO 목록 검색" })
+    keymap("n", "<leader>ft", "<cmd>TodoFzfLua<cr>", { desc = "TODO 목록 검색" })
   end,
 }

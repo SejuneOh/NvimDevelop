@@ -2,7 +2,7 @@ return {
   "seblyng/roslyn.nvim",
   ft = { "cs", "razor" },
   dependencies = {
-    "hrsh7th/cmp-nvim-lsp",
+    "saghen/blink.cmp",
   },
   opts = {
     filewatching = "auto",
@@ -16,7 +16,7 @@ return {
 
     -- roslyn LSP 서버 설정 (capabilities, settings)
     vim.lsp.config("roslyn", {
-      capabilities = require("cmp_nvim_lsp").default_capabilities(),
+      capabilities = require("blink.cmp").get_lsp_capabilities(),
       on_attach = function(_, bufnr)
         if vim.lsp.inlay_hint then
           vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })

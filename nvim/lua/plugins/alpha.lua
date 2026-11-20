@@ -20,9 +20,9 @@ return {
 
     -- 바로가기 버튼
     dashboard.section.buttons.val = {
-      dashboard.button("f", "  파일 찾기", "<cmd>Telescope find_files<CR>"),
-      dashboard.button("r", "  최근 파일", "<cmd>Telescope oldfiles<CR>"),
-      dashboard.button("s", "  프로젝트 검색", "<cmd>Telescope live_grep<CR>"),
+      dashboard.button("f", "  파일 찾기", "<cmd>FzfLua files<CR>"),
+      dashboard.button("r", "  최근 파일", "<cmd>FzfLua oldfiles<CR>"),
+      dashboard.button("s", "  프로젝트 검색", "<cmd>FzfLua live_grep<CR>"),
       dashboard.button("n", "  새 파일", "<cmd>ene<CR>"),
       dashboard.button("c", "  설정 파일", "<cmd>edit ~/.config/nvim/init.lua<CR>"),
       dashboard.button("q", "  종료", "<cmd>qa<CR>"),
