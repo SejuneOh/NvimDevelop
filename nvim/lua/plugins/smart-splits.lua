@@ -3,7 +3,7 @@ return {
   config = function()
     local smart_splits = require("smart-splits")
     smart_splits.setup({
-      at_edge = "stop",
+      move = { at_edge = "stop" },
     })
 
     -- Moving between splits (Alt + hjkl)

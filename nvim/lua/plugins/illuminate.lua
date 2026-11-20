@@ -10,7 +10,7 @@ return {
       providers = { "lsp", "regex" },
       filetypes_denylist = {
         "NvimTree",
-        "TelescopePrompt",
+        "fzf",
         "alpha",
         "dashboard",
         "lazy",

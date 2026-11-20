@@ -2,7 +2,7 @@ return {
   "GustavEikaas/easy-dotnet.nvim",
   dependencies = {
     "nvim-lua/plenary.nvim",
-    "nvim-telescope/telescope.nvim",
+    "ibhagwan/fzf-lua",
   },
   cmd = { "Dotnet", "DotnetRunProfile" },
   keys = {
@@ -16,6 +16,7 @@ return {
   },
   config = function()
     require("easy-dotnet").setup({
+      picker = "fzf",
       -- C# LSP는 roslyn.nvim이 단독 담당. 이 값을 켜면 Roslyn 서버가 중복 실행된다.
       lsp = { enabled = false },
       projx_lsp = { enabled = false },

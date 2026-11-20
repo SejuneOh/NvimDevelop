@@ -27,20 +27,6 @@ return {
     "kristijanhusak/vim-dadbod-completion",
     ft = { "sql", "mysql", "plsql" },
     dependencies = { "tpope/vim-dadbod" },
-    config = function()
-      -- nvim-cmp에 dadbod 소스 등록 (SQL 파일에서만)
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "sql", "mysql", "plsql" },
-        callback = function()
-          require("cmp").setup.buffer({
-            sources = {
-              { name = "vim-dadbod-completion" },
-              { name = "buffer" },
-              { name = "path" },
-            },
-          })
-        end,
-      })
-    end,
+    -- 자동완성 소스 등록은 blink-cmp.lua 의 sources.per_filetype 에 있다
   },
 }
