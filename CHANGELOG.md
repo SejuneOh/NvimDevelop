@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/SejuneOh/NvimDevelop/compare/v0.3.0...v0.4.0) (2026-11-20)
+
+
+### Features
+
+* **nvim:** claudecode.nvim으로 Claude Code CLI를 Neovim에 IDE처럼 연결 ([58c541a](https://github.com/SejuneOh/NvimDevelop/commit/58c541aef5d24cf64975258a7e74f275c7de57eb))
+* **nvim:** claudecode.nvim으로 Claude Code CLI를 Neovim에 IDE처럼 연결 ([7c77fd4](https://github.com/SejuneOh/NvimDevelop/commit/7c77fd4b35c8e03f3951e11db58f60048b16a120))
+
 ## [0.3.0](https://github.com/SejuneOh/NvimDevelop/compare/v0.2.0...v0.3.0) (2026-11-20)
 
 
